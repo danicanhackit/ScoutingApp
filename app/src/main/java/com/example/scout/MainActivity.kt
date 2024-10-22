@@ -27,9 +27,11 @@ fun AppNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "signIn") {
         composable("signIn") { SignIn(navController) }
         composable("home/{scouterName}") { backStackEntry ->
-            HomeScreen(backStackEntry.arguments?.getString("scouterName")?:"")
+            StartScreen(backStackEntry.arguments?.getString("scouterName")?:"", navController)
         }
+        composable("eventSelection") { EventSelection(navController)}
     }
 }
+
 
 
