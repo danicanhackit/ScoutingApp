@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,6 +63,7 @@ fun SignIn(navController: NavHostController) {
                 value = teamNumber,
                 onValueChange = { teamNumber = it },
                 label = { Text("Team Number:", color = Burgundy) },
+                textStyle = TextStyle(color = Burgundy),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = PlatyRed,
@@ -76,6 +78,7 @@ fun SignIn(navController: NavHostController) {
                 value = scouterName,
                 onValueChange = { scouterName = it },
                 label = { Text("Scouter Name:", color = Burgundy) },
+                textStyle = TextStyle(color = Burgundy),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = PlatyRed,
                     unfocusedBorderColor = Burgundy,

@@ -1,5 +1,6 @@
 package com.example.scout.api
 
+import android.app.usage.UsageEvents
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -10,5 +11,5 @@ interface BlueAllianceService {
     fun getTeamEvents(
         @Path("teamNumber") teamNumber: String,
         @Path("year") year: Int
-    ): Call<List<Event>>
+    ): Call<List<UsageEvents.Event>>
 }
