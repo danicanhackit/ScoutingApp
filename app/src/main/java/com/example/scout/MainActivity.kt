@@ -26,10 +26,11 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "signIn") {
         composable("signIn") { SignIn(navController) }
-        composable("home/{scouterName}") { backStackEntry ->
+        composable("start/{scouterName}") { backStackEntry ->
             StartScreen(backStackEntry.arguments?.getString("scouterName")?:"", navController)
         }
         composable("eventSelection") { EventSelection(navController)}
+        composable("home") { Home(navController)}
     }
 }
 

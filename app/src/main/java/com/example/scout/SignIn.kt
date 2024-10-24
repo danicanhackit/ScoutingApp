@@ -90,7 +90,7 @@ fun SignIn(navController: NavHostController) {
                                 "Welcome ${scouterName.text} from \"$nickname\"",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            navController.navigate("home/${scouterName.text}")
+                            navController.navigate("start/${scouterName.text}")
                         } else {
                             Toast.makeText(context, "Invalid team number. Please try again.", Toast.LENGTH_SHORT).show()
                         }

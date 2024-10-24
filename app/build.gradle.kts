@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation ("androidx.navigation:navigation-compose:2.7.3")
     implementation(libs.androidx.navigation.testing)
+    implementation(libs.androidx.benchmark.macro)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
