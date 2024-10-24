@@ -1,15 +1,14 @@
 package com.example.scout.api
 
-import android.app.usage.UsageEvents
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface BlueAllianceService {
-    @GET("team/frc{teamNumber}/events/{year}/simple")
-    fun getTeamEvents(
+    @GET("team/frc{teamNumber}/simple")
+    fun getTeam(
         @Path("teamNumber") teamNumber: String,
-        @Path("year") year: Int
-    ): Call<List<UsageEvents.Event>>
+        @Header("X-TBA-Auth-Key") apiKey: String
+    ): Call<TeamResponse>  // Use TeamResponse directly, not a list
 }
