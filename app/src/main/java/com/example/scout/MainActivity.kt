@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,10 +27,15 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "signIn") {
         composable("signIn") { SignIn(navController) }
-        composable("start/{scouterName}") { backStackEntry ->
-            StartScreen(backStackEntry.arguments?.getString("scouterName")?:"", navController)
+        composable("start/{scouterName}/{teamNickname}") { backStackEntry ->
+            val scouterName = backStackEntry.arguments?.getString("scouterName") ?: ""
+            val teamNickname = backStackEntry.arguments?.getString("teamNickname") ?: ""
+            StartScreen(scouterName, teamNickname, navController)
         }
-        composable("eventSelection") { EventSelection(navController)}
+        composable("eventSelection") { backStackEntry ->
+            val eventSelectionViewModel: TeamViewModel = viewModel(backStackEntry)
+            EventSelection(eventSelectionViewModel, navController)
+        }
         composable("home") { Home(navController)}
     }
 }

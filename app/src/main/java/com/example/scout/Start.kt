@@ -24,7 +24,7 @@ import com.example.scout.ui.theme.ScoutTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartScreen(scouterName: String, navController: NavHostController) {
+fun StartScreen(scouterName: String, teamName: String, navController: NavHostController) {
     Column (
         modifier = Modifier.fillMaxSize()
     ){
@@ -41,7 +41,8 @@ fun StartScreen(scouterName: String, navController: NavHostController) {
         ) {
             Text(text = "Welcome, $scouterName!", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
-
+            Text(text = teamName, style = MaterialTheme.typography.headlineMedium)
+            Spacer(modifier = Modifier.height(20.dp))
             Button(onClick = {
                 navController.navigate("eventSelection")
             },
@@ -76,6 +77,6 @@ fun StartScreen(scouterName: String, navController: NavHostController) {
 fun StartScreenPreview(){
     ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
-        StartScreen(scouterName = "Dani", navController)
+        StartScreen(scouterName = "Dani", "PlatyPirates", navController)
     }
 }

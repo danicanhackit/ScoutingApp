@@ -1,9 +1,9 @@
 package com.example.scout.api
 data class TeamResponse(
-    val teamNumber: String,
+    val team_number: String,
     val nickname: String,
     val city: String,
-    val stateProv: String,
+    val state_prov: String,
     val country: String
     // Add other fields according to the API response
 )

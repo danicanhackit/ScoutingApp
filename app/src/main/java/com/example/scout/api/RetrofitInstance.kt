@@ -13,7 +13,7 @@ object RetrofitInstance {
             .build()
     }
 
-    val api: BlueAllianceService by lazy {
-        retrofit.create(BlueAllianceService::class.java)
+    val api: BlueAllianceAPI by lazy {
+        retrofit.create(BlueAllianceAPI::class.java)
     }
 }

@@ -14,9 +14,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.testing.TestNavHostController
-import com.example.scout.api.BlueAllianceService
+import com.example.scout.api.BlueAllianceAPI
 import com.example.scout.api.RetrofitInstance
 import com.example.scout.api.TeamResponse
 import com.example.scout.ui.theme.Burgundy
@@ -35,6 +36,7 @@ fun SignIn(navController: NavHostController) {
     var scouterName by remember { mutableStateOf(TextFieldValue("")) }
     var teamNumber by remember { mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
+    val teamViewModel: TeamViewModel = viewModel()
 
     Column(modifier = Modifier.fillMaxSize()) {
         CenterAlignedTopAppBar(
@@ -85,12 +87,13 @@ fun SignIn(navController: NavHostController) {
                 if (scouterName.text.isNotEmpty() && teamNumber.text.isNotEmpty()) {
                     fetchTeamInfo(teamNumber.text, context) { success, nickname ->
                         if (success && nickname != null) {
+                            teamViewModel.teamNumber = teamNumber.text
                             Toast.makeText(
                                 context,
                                 "Welcome ${scouterName.text} from \"$nickname\"",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            navController.navigate("start/${scouterName.text}")
+                            navController.navigate("start/${scouterName.text}/${nickname}")
                         } else {
                             Toast.makeText(context, "Invalid team number. Please try again.", Toast.LENGTH_SHORT).show()
                         }
