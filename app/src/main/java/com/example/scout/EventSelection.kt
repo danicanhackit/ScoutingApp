@@ -112,6 +112,7 @@ fun fetchTeamEvents(
             if (response.isSuccessful) {
                 val eventNames = response.body()?.map { it.name } // Extract event names
                 onResult(true, eventNames) // Pass the result to the callback
+                Log.d("SUCCESS", "Successful API response")
             } else {
                 onResult(false, null) // Handle error with null data
             }

@@ -37,6 +37,7 @@ fun AppNavigation(navController: NavHostController) {
             EventSelection(eventSelectionViewModel, navController)
         }
         composable("home") { Home(navController)}
+        composable("addReport1") { AddReport1(navController)}
     }
 }
 

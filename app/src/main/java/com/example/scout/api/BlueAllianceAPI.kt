@@ -17,6 +17,7 @@ interface BlueAllianceAPI {
     fun getTeamEvents(
         @Path("teamNumber") teamNumber: String,
         @Path("year") year: Int,
-        @Query("X-TBA-Auth-Key") apiKey: String
+        //@Query("X-TBA-Auth-Key") apiKey: String
+        @Header("X-TBA-Auth-Key") apiKey: String
     ): Call<List<TeamEventResponse>>
 }
