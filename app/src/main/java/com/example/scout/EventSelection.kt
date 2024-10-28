@@ -37,6 +37,8 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
                     options = eventNames // Update the dropdown options with fetched events
                     if (options.isNotEmpty()) {
                         itemPosition.value = 0 // Set default selected item
+                    } else{
+                        Log.d("NO EVENTS", "No events found")
                     }
                 } else {
                     Log.e("API", "Failed to fetch events")
