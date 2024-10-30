@@ -38,6 +38,7 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable("home") { Home(navController)}
         composable("addReport1") { AddReport1(navController)}
+        composable("addReport2") { AddReport2(navController)}
     }
 }
 
