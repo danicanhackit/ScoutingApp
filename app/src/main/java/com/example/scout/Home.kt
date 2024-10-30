@@ -24,9 +24,10 @@ import com.example.scout.ui.theme.ScoutTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navController: NavHostController){
+fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
+    val eventName = teamViewModel.eventName
     CenterAlignedTopAppBar(
-        title = { Text(text = "9181 PlatyPirates", style = MaterialTheme.typography.headlineSmall) }
+       title = { Text(text = "9181 PlatyPirates", style = MaterialTheme.typography.headlineSmall) }
     )
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -38,7 +39,9 @@ fun Home(navController: NavHostController){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // update for actual event name
-        Text(text = "Event Name", style = MaterialTheme.typography.headlineLarge)
+        if (eventName != null) {
+            Text(text = eventName, style = MaterialTheme.typography.headlineLarge)
+        }
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
@@ -74,7 +77,8 @@ fun Home(navController: NavHostController){
 fun HomePreview(){
     ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
-        Home(navController)
+        val teamViewModel = TeamViewModel()
+        Home(teamViewModel, navController)
     }
 }
 

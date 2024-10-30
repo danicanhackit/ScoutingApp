@@ -27,16 +27,20 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
     val isDropDownExpanded = remember { mutableStateOf(false) }
     val itemPosition = remember { mutableStateOf(0) }
     val teamNumber = teamViewModel.teamNumber
+    var eventName = "Event Name"
+    //val teamNumber = 9181
     var options by remember { mutableStateOf(listOf<String>()) } // Options for the dropdown
 
     // Fetch events when the screen is first displayed
     LaunchedEffect(teamNumber) {
         if (teamNumber != null) {
-            fetchTeamEvents(teamNumber, 2024, API_KEY) { success, eventNames ->
+            Log.d("TEAM_NUM", "Team number not null")
+            fetchTeamEvents(teamNumber.toString(), 2024, API_KEY) { success, eventNames ->
                 if (success && eventNames != null) {
                     options = eventNames // Update the dropdown options with fetched events
                     if (options.isNotEmpty()) {
                         itemPosition.value = 0 // Set default selected item
+                        Log.d("EVENTS FOUND", "Found events for team")
                     } else{
                         Log.d("NO EVENTS", "No events found")
                     }
@@ -82,6 +86,7 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
                         onClick = {
                             isDropDownExpanded.value = false
                             itemPosition.value = index
+                            eventName = option
                         })
                 }
             }
@@ -89,6 +94,7 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
 
         Spacer(modifier = Modifier.height(100.dp))
         Button(onClick = {
+            teamViewModel.eventName = eventName
             navController.navigate("home")
         }) {
             Text(text = "Confirm")
@@ -111,10 +117,11 @@ fun fetchTeamEvents(
         ) {
             if (response.isSuccessful) {
                 val eventNames = response.body()?.map { it.name } // Extract event names
+                Log.d("RESPONSE_BODY", "Events: ${response.body()}")
                 onResult(true, eventNames) // Pass the result to the callback
-                Log.d("SUCCESS", "Successful API response")
             } else {
-                onResult(false, null) // Handle error with null data
+                Log.e("API_ERROR", "Error: ${response.code()} - ${response.message()}")
+                onResult(false, null) // Handle error
             }
         }
 

@@ -25,18 +25,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
+    val teamViewModel: TeamViewModel = viewModel()
     NavHost(navController = navController, startDestination = "signIn") {
-        composable("signIn") { SignIn(navController) }
+        composable("signIn") { SignIn(teamViewModel, navController) }
         composable("start/{scouterName}/{teamNickname}") { backStackEntry ->
             val scouterName = backStackEntry.arguments?.getString("scouterName") ?: ""
             val teamNickname = backStackEntry.arguments?.getString("teamNickname") ?: ""
             StartScreen(scouterName, teamNickname, navController)
         }
-        composable("eventSelection") { backStackEntry ->
-            val eventSelectionViewModel: TeamViewModel = viewModel(backStackEntry)
-            EventSelection(eventSelectionViewModel, navController)
-        }
-        composable("home") { Home(navController)}
+        composable("eventSelection") { EventSelection(teamViewModel, navController)}
+        composable("home") { Home(teamViewModel, navController)}
         composable("addReport1") { AddReport1(navController)}
         composable("addReport2") { AddReport2(navController)}
     }

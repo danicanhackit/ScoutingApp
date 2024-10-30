@@ -30,13 +30,14 @@ import retrofit2.Response
 // Temporary hardcoded API key for testing purposes
 private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3MxVwS2OZtB7Mf"
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignIn(navController: NavHostController) {
+fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
     var scouterName by remember { mutableStateOf(TextFieldValue("")) }
     var teamNumber by remember { mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
-    val teamViewModel: TeamViewModel = viewModel()
+    //val teamViewModel: TeamViewModel = viewModel()
 
     Column(modifier = Modifier.fillMaxSize()) {
         CenterAlignedTopAppBar(
@@ -115,14 +116,20 @@ fun fetchTeamInfo(teamNumber: String, context: android.content.Context, onResult
     call.enqueue(object : Callback<TeamResponse> {
         override fun onResponse(call: Call<TeamResponse>, response: Response<TeamResponse>) {
             if (response.isSuccessful) {
-                response.body()?.let {
-                    Log.d("API", "Team Info: $it")
-                    onResult(true, it.nickname) // Return the team nickname
-                } ?: run {
-                    onResult(false, null) // No valid response
+                val teamInfo = response.body()
+                if (teamInfo != null) {
+                    Log.d("API", "Team Info: $teamInfo")
+                    onResult(true, teamInfo.nickname)  // Pass nickname to the result callback
+                } else {
+                    Log.e("API", "Response body is null")
+                    onResult(false, null)  // No data found
                 }
             } else {
-                onResult(false, null) // Unsuccessful response
+                Log.e("API", "Request failed with status: ${response.code()}")
+                response.errorBody()?.let { errorBody ->
+                    Log.e("API", "Error body: ${errorBody.string()}")
+                }
+                onResult(false, null)  // Mark failure
             }
         }
 
@@ -139,6 +146,10 @@ fun fetchTeamInfo(teamNumber: String, context: android.content.Context, onResult
 fun SignInPreview() {
     ScoutTheme {
         val navController = TestNavHostController(LocalContext.current)
-        SignIn(navController)
+        val teamViewModel = TeamViewModel()
+        SignIn(teamViewModel, navController)
     }
 }
+
+
+
