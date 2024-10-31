@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -38,9 +39,12 @@ fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // update for actual event name
+
+
         if (eventName != null) {
-            Text(text = eventName, style = MaterialTheme.typography.headlineLarge)
+            Text(text = eventName,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineLarge)
         }
         Spacer(modifier = Modifier.height(20.dp))
 

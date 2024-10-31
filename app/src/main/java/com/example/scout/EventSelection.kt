@@ -72,7 +72,9 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
                     isDropDownExpanded.value = true
                 }
             ) {
-                Text(text = if (options.isNotEmpty()) options[itemPosition.value] else "Select Event")
+                Text(
+                    text = if (options.isNotEmpty()) options[itemPosition.value] else "Select Event"
+                )
             }
             DropdownMenu(
                 expanded = isDropDownExpanded.value,
@@ -87,6 +89,8 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
                             isDropDownExpanded.value = false
                             itemPosition.value = index
                             eventName = option
+                            teamViewModel.eventName = eventName
+                            Log.d("NAME", option)
                         })
                 }
             }
@@ -94,7 +98,8 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
 
         Spacer(modifier = Modifier.height(100.dp))
         Button(onClick = {
-            teamViewModel.eventName = eventName
+            Log.d("NAME", eventName)
+            Log.d("MODEL", teamViewModel.eventName!!)
             navController.navigate("home")
         }) {
             Text(text = "Confirm")
