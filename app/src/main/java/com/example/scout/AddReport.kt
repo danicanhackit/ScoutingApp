@@ -1,6 +1,7 @@
 package com.example.scout
 
-import androidx.compose.foundation.layout.Arrangement
+import android.util.Log
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,14 +15,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -30,14 +26,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.testing.TestNavHostController
-import com.example.scout.ui.theme.Burgundy
-import com.example.scout.ui.theme.PlatyRed
+import com.example.scout.api.RetrofitInstance
+import com.example.scout.api.TeamResponse
 import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.ui.theme.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+
+private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3MxVwS2OZtB7Mf"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddReport2(navController: NavHostController){
-    var field1 by remember { mutableStateOf(TextFieldValue(" "))}
+fun AddReport(navController: NavHostController){
+    var teamNum by remember { mutableStateOf(TextFieldValue(" "))}
     Column {
         CenterAlignedTopAppBar(
             title = {
@@ -57,13 +60,13 @@ fun AddReport2(navController: NavHostController){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // update for actual event name
-            Text(text = "Teleop Period", style = MaterialTheme.typography.headlineLarge)
+            Text(text = "Add Report", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
             OutlinedTextField(
-                value = field1,
-                onValueChange = { field1 = it },
-                label = { Text("Field 1:", color = Burgundy)},
+                value = teamNum,
+                onValueChange = { teamNum = it },
+                label = { Text("Team Being Scouted", color = Burgundy)},
                 textStyle = TextStyle(color = Burgundy),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = PlatyRed,
@@ -76,17 +79,17 @@ fun AddReport2(navController: NavHostController){
             Row {
                 Button(
                     onClick = {
-                        navController.navigate("addReport1")
+                        navController.navigate("home")
                     },
                     modifier = Modifier.width(100.dp)
                 ) {
-                    Text(text = "Back")
+                    Text(text = "Cancel")
                 }
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
                         // add fields to database
-                        navController.navigate("addReport3")
+                        navController.navigate("autonomous")
                     },
                     modifier = Modifier.width(100.dp)
                 ) {
@@ -99,11 +102,10 @@ fun AddReport2(navController: NavHostController){
 
 @Preview(showBackground = true)
 @Composable
-fun AddReport2Preview(){
+fun AddReportPreview(){
     ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
-        AddReport2(navController)
+        AddReport(navController)
     }
 }
-
 

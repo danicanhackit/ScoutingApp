@@ -58,7 +58,7 @@ fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
 
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
-            navController.navigate("addReport1")
+            navController.navigate("addReport")
         },
             modifier = Modifier.fillMaxWidth()
         ) {

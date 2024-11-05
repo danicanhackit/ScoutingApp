@@ -35,8 +35,9 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable("eventSelection") { EventSelection(teamViewModel, navController)}
         composable("home") { Home(teamViewModel, navController)}
-        composable("addReport1") { AddReport1(navController)}
-        composable("addReport2") { AddReport2(navController)}
+        composable("addReport"){ AddReport(navController)}
+        composable("autonomous") { Autonomous(navController)}
+        composable("teleop") { Teleop(navController)}
     }
 }
 

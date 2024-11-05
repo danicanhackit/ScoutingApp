@@ -30,7 +30,7 @@ import com.example.scout.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddReport1(navController: NavHostController){
+fun Autonomous(navController: NavHostController){
     var field1 by remember { mutableStateOf(TextFieldValue(" "))}
     Column {
         CenterAlignedTopAppBar(
@@ -80,7 +80,7 @@ fun AddReport1(navController: NavHostController){
                 Button(
                     onClick = {
                         // add fields to database
-                        navController.navigate("addReport2")
+                        navController.navigate("teleop")
                     },
                     modifier = Modifier.width(100.dp)
                 ) {
@@ -93,10 +93,10 @@ fun AddReport1(navController: NavHostController){
 
 @Preview(showBackground = true)
 @Composable
-fun AddReport1Preview(){
+fun AutonomousPreview(){
     ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
-        AddReport1(navController)
+        Autonomous(navController)
     }
 }
 
