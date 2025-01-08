@@ -26,6 +26,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation(navController: NavHostController) {
     val teamViewModel: TeamViewModel = viewModel()
+    val scoutingViewModel: ScoutingViewModel = viewModel()
     NavHost(navController = navController, startDestination = "signIn") {
         composable("signIn") { SignIn(teamViewModel, navController) }
         composable("start/{scouterName}/{teamNickname}") { backStackEntry ->
@@ -36,7 +37,7 @@ fun AppNavigation(navController: NavHostController) {
         composable("eventSelection") { EventSelection(teamViewModel, navController)}
         composable("home") { Home(teamViewModel, navController)}
         composable("addReport"){ AddReport(navController)}
-        composable("autonomous") { Autonomous(navController)}
+        composable("autonomous") { Autonomous(scoutingViewModel, navController)}
         composable("teleop") { Teleop(navController)}
     }
 }

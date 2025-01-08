@@ -1,38 +1,30 @@
 package com.example.scout
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.testing.TestNavHostController
+import com.example.scout.database.ScoutingRepository
 import com.example.scout.ui.theme.ScoutTheme
-import com.example.scout.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Autonomous(navController: NavHostController){
-    var field1 by remember { mutableStateOf(TextFieldValue(" "))}
-    Column {
+fun Autonomous(scoutingViewModel: ScoutingViewModel, navController: NavHostController) {
+    // Initialize state for each input field, one per data field
+    val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
+
+    // Observe the fields for the Autonomous section
+    val fieldsForAutonomous by scoutingViewModel.fieldsForAutonomous.observeAsState(emptyList())
+
+    Column(modifier = Modifier.fillMaxSize()) {
         CenterAlignedTopAppBar(
             title = {
                 Text(
@@ -41,6 +33,7 @@ fun Autonomous(navController: NavHostController){
                 )
             }
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(
@@ -50,23 +43,29 @@ fun Autonomous(navController: NavHostController){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // update for actual event name
             Text(text = "Autonomous Period", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
-                value = field1,
-                onValueChange = { field1 = it },
-                label = { Text("Field 1:", color = Burgundy)},
-                textStyle = TextStyle(color = Burgundy),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = PlatyRed,
-                    unfocusedBorderColor = Burgundy,
-                    cursorColor = Burgundy
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(20.dp))
+            // Iterate over the fields for the autonomous section and create number input fields
+            fieldsForAutonomous.forEach { field ->
+                val fieldName = field.fieldName
+                val currentValue = fieldValues.value[fieldName] ?: ""
+
+                // Render a number input for each field
+                OutlinedTextField(
+                    value = currentValue,
+                    onValueChange = { newValue ->
+                        // Ensure only numbers are entered
+                        if (newValue.all { it.isDigit() || it == '.' }) {
+                            fieldValues.value = fieldValues.value + (fieldName to newValue)
+                        }
+                    },
+                    label = { Text(fieldName) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
             Row {
                 Button(
                     onClick = {
@@ -79,7 +78,7 @@ fun Autonomous(navController: NavHostController){
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
-                        // add fields to database
+                        // Add fields to database or continue to next screen
                         navController.navigate("teleop")
                     },
                     modifier = Modifier.width(100.dp)
@@ -91,12 +90,11 @@ fun Autonomous(navController: NavHostController){
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
-fun AutonomousPreview(){
-    ScoutTheme{
+fun AutonomousPreview() {
+    ScoutTheme {
         val navController = TestNavHostController(LocalContext.current)
-        Autonomous(navController)
+        Autonomous(ScoutingViewModel(ScoutingRepository()), navController)
     }
-}
-
+}*/
