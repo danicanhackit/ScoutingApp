@@ -1,5 +1,7 @@
 package com.example.scout.database
 
+import android.util.Log
+
 class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
 
     suspend fun getFieldsForSection(section: String): List<ScoutingInputFields> {
@@ -20,6 +22,7 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
             if (existingFields.isEmpty()) {
                 // Insert default fields for each section if not already in the database
                 val fields = getDefaultFieldsForSection(section)
+                Log.d("Database", "Database preloaded successfully")
                 fields.forEach { scoutingFieldDao.insertField(it) }
             }
         }
