@@ -110,10 +110,14 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
             )
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Button to go to next screen, only saves the team number if user is going to next screen
             Button(onClick = {
+                // Only saves the team number if the text field is filled
                 if (scouterName.text.isNotEmpty() && teamNumber.text.isNotEmpty()) {
                     fetchTeamInfo(teamNumber.text, context) { success, nickname ->
+                        // Only saves the team number if the API call is successful
                         if (success && nickname != null) {
+                            // Saves current value of team number entered in text field to ViewModel
                             teamViewModel.teamNumber = teamNumber.text
                             Toast.makeText(
                                 context,

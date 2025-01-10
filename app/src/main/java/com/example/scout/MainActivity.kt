@@ -3,12 +3,15 @@ package com.example.scout
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.scout.database.DatabaseProvider
+import com.example.scout.database.ScoutingRepository
 import com.example.scout.ui.theme.ScoutTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,16 +20,21 @@ class MainActivity : ComponentActivity() {
         setContent {
             ScoutTheme {
                 val navController = rememberNavController()
-                AppNavigation(navController)
+                val database = DatabaseProvider.getDatabase(applicationContext)
+                val scoutingRepository = ScoutingRepository(database.scoutingInputFieldsDao())
+                val scoutingViewModel: ScoutingViewModel by viewModels{
+                    ScoutingViewModelFactory(scoutingRepository)
+                }
+                AppNavigation(navController, scoutingViewModel)
             }
         }
     }
 }
 
 @Composable
-fun AppNavigation(navController: NavHostController) {
+fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingViewModel) {
     val teamViewModel: TeamViewModel = viewModel()
-    val scoutingViewModel: ScoutingViewModel = viewModel()
+
     NavHost(navController = navController, startDestination = "signIn") {
         composable("signIn") { SignIn(teamViewModel, navController) }
         composable("start/{scouterName}/{teamNickname}") { backStackEntry ->

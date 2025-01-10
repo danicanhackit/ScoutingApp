@@ -17,13 +17,13 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     val fieldsForTeleop: LiveData<List<ScoutingInputFields>> = _fieldsForTeleop
 
     // Call this function to preload the database with default fields
-    init {
+    /*init {
         viewModelScope.launch {
             repository.preloadDatabase()
-            loadFieldsForAutonomous()
-            loadFieldsForTeleop()
+            //loadFieldsForAutonomous()
+            //loadFieldsForTeleop()
         }
-    }
+    }*/
 
     // Load fields for the "Autonomous" section
     private fun loadFieldsForAutonomous() {
