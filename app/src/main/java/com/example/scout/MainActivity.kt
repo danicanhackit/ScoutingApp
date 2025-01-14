@@ -46,11 +46,16 @@ fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingV
             StartScreen(scouterName, teamNickname, navController)
         }
         composable("editDataFields") { EditDataFields(navController)}
+        composable("removeDataFieldMenu") { RemoveDataFieldMenu(navController)}
+        composable("addDataFieldMenu") { AddDataFieldMenu(teamViewModel, navController)}
+        composable("addDataField") { AddDataField(teamViewModel, navController)}
+
         composable("eventSelection") { EventSelection(teamViewModel, navController)}
         composable("home") { Home(teamViewModel, navController)}
         composable("addReport"){ AddReport(navController)}
-        composable("autonomous") { Autonomous(scoutingViewModel, navController)}
+        composable("autonomous") { Autonomous(teamViewModel, scoutingViewModel, navController)}
         composable("teleop") { Teleop(scoutingViewModel, navController)}
+        composable("endgame") { Endgame(scoutingViewModel, navController)}
     }
 }
 

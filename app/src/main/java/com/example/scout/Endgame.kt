@@ -21,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -31,23 +29,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.scout.viewmodels.ScoutingViewModel
-import com.example.scout.viewmodels.TeamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController) {
-    // Initialize state for each input field, one per data field
-    val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
-
-    val eventName = teamViewModel.eventName
-    // Accesses only autonomous fields from database through scoutingViewModel
-    val fieldsForAutonomous by scoutingViewModel.fieldsForAutonomous.observeAsState(emptyList())
+fun Endgame(scoutingViewModel: ScoutingViewModel, navController: NavHostController){
+    val fieldsForEndgame by scoutingViewModel.fieldsForEndgame.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) {
-        // Calls loadFieldsForAutonomous method from ScoutingViewModel
-        scoutingViewModel.loadFieldsForAutonomous()
+        scoutingViewModel.loadFieldsForEndgame()
     }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column {
         CenterAlignedTopAppBar(
             title = {
                 Text(
@@ -56,7 +47,6 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
                 )
             }
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(
@@ -66,18 +56,14 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (eventName != null) {
-                Text(text = eventName, style = MaterialTheme.typography.headlineLarge)
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Autonomous Period", style = MaterialTheme.typography.headlineLarge)
+            // update for actual event name
+            Text(text = "Endgame Period", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Iterate over the fields for the autonomous section and create number input fields
-            fieldsForAutonomous.forEach { field ->
+            fieldsForEndgame.forEach { field ->
                 OutlinedTextField(
                     value = "",
-                    onValueChange = {},
+                    onValueChange = {}, // Handle value changes
                     label = { Text(field.fieldName) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
@@ -88,25 +74,24 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-
+            Spacer(modifier = Modifier.height(20.dp))
             Row {
                 Button(
                     onClick = {
-                        navController.navigate("home")
-                    },
-                    modifier = Modifier.width(200.dp)
-                ) {
-                    Text(text = "Cancel")
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = {
-                        // Add fields to database or continue to next screen
                         navController.navigate("teleop")
                     },
                     modifier = Modifier.width(100.dp)
                 ) {
-                    Text(text = "Next")
+                    Text(text = "Back")
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Button(
+                    onClick = {
+                        navController.navigate("eventSelection")
+                    },
+                    modifier = Modifier.width(100.dp)
+                ) {
+                    Text(text = "Confirm")
                 }
             }
         }
@@ -115,9 +100,13 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
 
 /*@Preview(showBackground = true)
 @Composable
-fun AutonomousPreview() {
-    ScoutTheme {
+fun EndgamePreview(){
+    ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
-        Autonomous(ScoutingViewModel(ScoutingRepository()), navController)
+        Teleop(navController)
     }
 }*/
+
+
+
+

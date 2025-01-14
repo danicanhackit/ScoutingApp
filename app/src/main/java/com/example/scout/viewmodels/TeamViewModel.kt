@@ -8,4 +8,7 @@ class TeamViewModel: ViewModel() {
     var eventName: String? = null
     var year: Int? = null
     var teamBeingScouted: String? = null
+
+    var dataFieldSection: String? = null
+
 }

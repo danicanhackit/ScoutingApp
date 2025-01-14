@@ -16,6 +16,9 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     private val _fieldsForTeleop = MutableLiveData<List<ScoutingInputFields>>()
     val fieldsForTeleop: LiveData<List<ScoutingInputFields>> = _fieldsForTeleop
 
+    private val _fieldsForEndgame = MutableLiveData<List<ScoutingInputFields>>()
+    val fieldsForEndgame: LiveData<List<ScoutingInputFields>> = _fieldsForEndgame
+
     // Call this function to preload the database with default fields
     init {
         viewModelScope.launch {

@@ -39,13 +39,35 @@ fun EditDataFields(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(text = "Edit Data Fields", style = MaterialTheme.typography.headlineLarge)
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    navController.navigate("removeDataFieldMenu")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Remove")
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(
+                onClick = {
+                    navController.navigate("addDataFieldMenu")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Add")
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
             Button(
                 onClick = {
                     navController.navigate("home")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Home")
+                Text(text = "Exit")
             }
 
             Spacer(modifier = Modifier.height(10.dp))
