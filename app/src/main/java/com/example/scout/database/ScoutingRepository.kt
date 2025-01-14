@@ -1,12 +1,12 @@
 package com.example.scout.database
 
 import android.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
 
+    // Suspend keyword ensures functions run asynchronously to main thread
     suspend fun getFieldsForSection(section: String): List<ScoutingInputFields> {
+        // Calls function on scoutingFieldDao
         return scoutingFieldDao.getFieldsForSection(section)
     }
     suspend fun insertField(field: ScoutingInputFields) {
@@ -18,7 +18,6 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
 
     // Preload database with default fields if necessary
     suspend fun preloadDatabase() {
-        //withContext(Dispatchers.IO){
             val sections = listOf("Autonomous", "Teleop", "Endgame")
             sections.forEach { section ->
                 val existingFields = scoutingFieldDao.getFieldsForSection(section)
@@ -29,7 +28,6 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
                     fields.forEach { scoutingFieldDao.insertField(it) }
                 }
             }
-       // }
     }
 
     // Define default fields for each section

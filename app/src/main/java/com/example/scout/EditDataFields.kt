@@ -41,11 +41,11 @@ fun EditDataFields(navController: NavHostController) {
         ) {
             Button(
                 onClick = {
-                    navController.navigate("eventSelection")
+                    navController.navigate("home")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Select Event")
+                Text(text = "Home")
             }
 
             Spacer(modifier = Modifier.height(10.dp))

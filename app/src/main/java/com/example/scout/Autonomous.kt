@@ -38,10 +38,11 @@ fun Autonomous(scoutingViewModel: ScoutingViewModel, navController: NavHostContr
     // Initialize state for each input field, one per data field
     val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
 
-    // Observe the fields for the Autonomous section
+    // Accesses only autonomous fields from database through scoutingViewModel
     val fieldsForAutonomous by scoutingViewModel.fieldsForAutonomous.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) {
+        // Calls loadFieldsForAutonomous method from ScoutingViewModel
         scoutingViewModel.loadFieldsForAutonomous()
     }
     Column(modifier = Modifier.fillMaxSize()) {
@@ -70,7 +71,7 @@ fun Autonomous(scoutingViewModel: ScoutingViewModel, navController: NavHostContr
             fieldsForAutonomous.forEach { field ->
                 OutlinedTextField(
                     value = "",
-                    onValueChange = {}, // Handle value changes
+                    onValueChange = {},
                     label = { Text(field.fieldName) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
