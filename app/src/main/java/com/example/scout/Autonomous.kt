@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,14 +18,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.scout.viewmodels.ScoutingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +40,10 @@ fun Autonomous(scoutingViewModel: ScoutingViewModel, navController: NavHostContr
 
     // Observe the fields for the Autonomous section
     val fieldsForAutonomous by scoutingViewModel.fieldsForAutonomous.observeAsState(emptyList())
-
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        scoutingViewModel.loadFieldsForAutonomous()
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         CenterAlignedTopAppBar(
             title = {
@@ -58,30 +68,26 @@ fun Autonomous(scoutingViewModel: ScoutingViewModel, navController: NavHostContr
 
             // Iterate over the fields for the autonomous section and create number input fields
             fieldsForAutonomous.forEach { field ->
-                val fieldName = field.fieldName
-                val currentValue = fieldValues.value[fieldName] ?: ""
-
-                // Render a number input for each field
                 OutlinedTextField(
-                    value = currentValue,
-                    onValueChange = { newValue ->
-                        // Ensure only numbers are entered
-                        if (newValue.all { it.isDigit() || it == '.' }) {
-                            fieldValues.value += (fieldName to newValue)
-                        }
-                    },
-                    label = { Text(fieldName) },
+                    value = "",
+                    onValueChange = {}, // Handle value changes
+                    label = { Text(field.fieldName) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = { keyboardController?.hide()}
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
+
 
             Row {
                 Button(
                     onClick = {
                         navController.navigate("home")
                     },
-                    modifier = Modifier.width(100.dp)
+                    modifier = Modifier.width(200.dp)
                 ) {
                     Text(text = "Cancel")
                 }

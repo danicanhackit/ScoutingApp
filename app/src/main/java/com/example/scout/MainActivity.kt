@@ -13,6 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.scout.database.DatabaseProvider
 import com.example.scout.database.ScoutingRepository
 import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.viewmodels.ScoutingViewModel
+import com.example.scout.viewmodels.ScoutingViewModelFactory
+import com.example.scout.viewmodels.TeamViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +45,12 @@ fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingV
             val teamNickname = backStackEntry.arguments?.getString("teamNickname") ?: ""
             StartScreen(scouterName, teamNickname, navController)
         }
+        composable("editDataFields") { EditDataFields(navController)}
         composable("eventSelection") { EventSelection(teamViewModel, navController)}
         composable("home") { Home(teamViewModel, navController)}
         composable("addReport"){ AddReport(navController)}
         composable("autonomous") { Autonomous(scoutingViewModel, navController)}
-        composable("teleop") { Teleop(navController)}
+        composable("teleop") { Teleop(scoutingViewModel, navController)}
     }
 }
 

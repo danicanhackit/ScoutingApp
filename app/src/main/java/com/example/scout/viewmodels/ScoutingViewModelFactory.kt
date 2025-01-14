@@ -1,4 +1,4 @@
-package com.example.scout
+package com.example.scout.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

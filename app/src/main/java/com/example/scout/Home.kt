@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.testing.TestNavHostController
 import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.viewmodels.TeamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

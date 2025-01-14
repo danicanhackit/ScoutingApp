@@ -5,5 +5,4 @@ data class TeamResponse(
     val city: String,
     val state_prov: String,
     val country: String
-    // Add other fields according to the API response
 )

@@ -1,4 +1,4 @@
-package com.example.scout
+package com.example.scout.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,16 +17,14 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     val fieldsForTeleop: LiveData<List<ScoutingInputFields>> = _fieldsForTeleop
 
     // Call this function to preload the database with default fields
-    /*init {
+    init {
         viewModelScope.launch {
             repository.preloadDatabase()
-            //loadFieldsForAutonomous()
-            //loadFieldsForTeleop()
         }
-    }*/
+    }
 
     // Load fields for the "Autonomous" section
-    private fun loadFieldsForAutonomous() {
+    fun loadFieldsForAutonomous() {
         viewModelScope.launch {
             val fields = repository.getFieldsForSection("Autonomous")
             _fieldsForAutonomous.postValue(fields)
@@ -34,14 +32,14 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     }
 
     // Load fields for the "Teleop" section
-    private fun loadFieldsForTeleop() {
+    fun loadFieldsForTeleop() {
         viewModelScope.launch {
             val fields = repository.getFieldsForSection("Teleop")
             _fieldsForTeleop.postValue(fields)
         }
     }
 
-    private fun loadFieldsForEndgame() {
+    fun loadFieldsForEndgame() {
         viewModelScope.launch {
             val fields = repository.getFieldsForSection("Endgame")
             _fieldsForTeleop.postValue(fields)

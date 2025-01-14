@@ -8,12 +8,18 @@ import androidx.room.Query
 
 @Dao
 interface ScoutingInputFieldsDao {
+    // Function to access all rows with a particular section name
     @Query("SELECT * FROM ScoutingInputFields WHERE section = :section")
-    fun getFieldsForSection(section: String): List<ScoutingInputFields>
 
+    // Functions annotated with suspend to ensure they run asynchronously to the main thread
+    // Prevents UI crash
+    suspend fun getFieldsForSection(section: String): List<ScoutingInputFields>
+
+    // Function to add a field to the database
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertField(field: ScoutingInputFields)
+    suspend fun insertField(field: ScoutingInputFields)
 
+    // Function to delete a field from the database
     @Delete
-    fun deleteField(field: ScoutingInputFields)
+    suspend fun deleteField(field: ScoutingInputFields)
 }

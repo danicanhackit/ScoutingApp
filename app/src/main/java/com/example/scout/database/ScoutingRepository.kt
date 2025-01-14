@@ -1,6 +1,8 @@
 package com.example.scout.database
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
 
@@ -16,16 +18,18 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
 
     // Preload database with default fields if necessary
     suspend fun preloadDatabase() {
-        val sections = listOf("Autonomous", "Teleop", "Endgame")
-        sections.forEach { section ->
-            val existingFields = scoutingFieldDao.getFieldsForSection(section)
-            if (existingFields.isEmpty()) {
-                // Insert default fields for each section if not already in the database
-                val fields = getDefaultFieldsForSection(section)
-                Log.d("Database", "Database preloaded successfully")
-                fields.forEach { scoutingFieldDao.insertField(it) }
+        //withContext(Dispatchers.IO){
+            val sections = listOf("Autonomous", "Teleop", "Endgame")
+            sections.forEach { section ->
+                val existingFields = scoutingFieldDao.getFieldsForSection(section)
+                if (existingFields.isEmpty()) {
+                    // Insert default fields for each section if not already in the database
+                    val fields = getDefaultFieldsForSection(section)
+                    Log.d("Database", "Database preloaded successfully")
+                    fields.forEach { scoutingFieldDao.insertField(it) }
+                }
             }
-        }
+       // }
     }
 
     // Define default fields for each section

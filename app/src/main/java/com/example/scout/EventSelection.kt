@@ -32,6 +32,7 @@ import androidx.navigation.testing.TestNavHostController
 import com.example.scout.api.RetrofitInstance
 import com.example.scout.api.TeamEventResponse
 import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.viewmodels.TeamViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,26 +47,28 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
     val itemPosition = remember { mutableStateOf(0) }
     // Creates variable with value of teamNumber saved to ViewModel
     val teamNumber = teamViewModel.teamNumber
+    val year = teamViewModel.year
     var eventName = "Event Name"
     var options by remember { mutableStateOf(listOf<String>()) } // Options for the dropdown
-
     // Fetch events when the screen is first displayed
 
     // Calls list of events based on teamNumber saved to ViewModel
     LaunchedEffect(teamNumber) {
         if (teamNumber != null) {
             Log.d("TEAM_NUM", "Team number not null")
-            fetchTeamEvents(teamNumber.toString(), 2024, API_KEY) { success, eventNames ->
-                if (success && eventNames != null) {
-                    options = eventNames // Update the dropdown options with fetched events
-                    if (options.isNotEmpty()) {
-                        itemPosition.value = 0 // Set default selected item
-                        Log.d("EVENTS FOUND", "Found events for team")
-                    } else{
-                        Log.d("NO EVENTS", "No events found")
+            if (year != null) {
+                fetchTeamEvents(teamNumber.toString(), year, API_KEY) { success, eventNames ->
+                    if (success && eventNames != null) {
+                        options = eventNames // Update the dropdown options with fetched events
+                        if (options.isNotEmpty()) {
+                            itemPosition.value = 0 // Set default selected item
+                            Log.d("EVENTS FOUND", "Found events for team")
+                        } else{
+                            Log.d("NO EVENTS", "No events found")
+                        }
+                    } else {
+                        Log.e("API", "Failed to fetch events")
                     }
-                } else {
-                    Log.e("API", "Failed to fetch events")
                 }
             }
         }

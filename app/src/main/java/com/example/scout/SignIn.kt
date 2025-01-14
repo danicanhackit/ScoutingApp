@@ -40,6 +40,7 @@ import com.example.scout.api.TeamResponse
 import com.example.scout.ui.theme.Burgundy
 import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.viewmodels.TeamViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -53,6 +54,7 @@ private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3
 fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
     var scouterName by remember { mutableStateOf(TextFieldValue("")) }
     var teamNumber by remember { mutableStateOf(TextFieldValue("")) }
+    var year by remember{ mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     //val teamViewModel: TeamViewModel = viewModel()
@@ -108,22 +110,42 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = year,
+                onValueChange = { year = it },
+                label = { Text("Year:", color = Burgundy) },
+                textStyle = TextStyle(color = Burgundy),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = { keyboardController?.hide()}
+                ),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = PlatyRed,
+                    unfocusedBorderColor = Burgundy,
+                    cursorColor = Burgundy
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Button to go to next screen, only saves the team number if user is going to next screen
+            // Button to go to next screen, notification only pops up if going to next screen
             Button(onClick = {
-                // Only saves the team number if the text field is filled
                 if (scouterName.text.isNotEmpty() && teamNumber.text.isNotEmpty()) {
-                    fetchTeamInfo(teamNumber.text, context) { success, nickname ->
-                        // Only saves the team number if the API call is successful
+                    // Calls fetchTeamInfo function using team number entered by user
+                    fetchTeamInfo(teamNumber.text, context) { success, nickname -> // Nickname from onSuccess function
                         if (success && nickname != null) {
-                            // Saves current value of team number entered in text field to ViewModel
                             teamViewModel.teamNumber = teamNumber.text
+                            // Toast is a widget library used for pop-up notifications
                             Toast.makeText(
                                 context,
+                                // Creates pop-up message welcoming the team from "nickname", which is
+                                // pulled from API response
                                 "Welcome ${scouterName.text} from \"$nickname\"",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            teamViewModel.year = year.text.toInt()
                             navController.navigate("start/${scouterName.text}/${nickname}")
                         } else {
                             Toast.makeText(context, "Invalid team number. Please try again.", Toast.LENGTH_SHORT).show()
@@ -140,19 +162,23 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
     }
 }
 
+// Parameter of teamNumber, which is entered by the user
 fun fetchTeamInfo(teamNumber: String, context: android.content.Context, onResult: (Boolean, String?) -> Unit) {
-    val call = RetrofitInstance.api.getTeam(teamNumber, API_KEY) // Include the API key here
+    // Calls getTeam function from BlueAllianceAPI interface that will return team info
+    val call = RetrofitInstance.api.getTeam(teamNumber, API_KEY)
 
     call.enqueue(object : Callback<TeamResponse> {
+        // If API response is successful
         override fun onResponse(call: Call<TeamResponse>, response: Response<TeamResponse>) {
             if (response.isSuccessful) {
                 val teamInfo = response.body()
                 if (teamInfo != null) {
                     Log.d("API", "Team Info: $teamInfo")
-                    onResult(true, teamInfo.nickname)  // Pass nickname to the result callback
+                    // Information I wanted was nickname, passes nickname to result callback
+                    onResult(true, teamInfo.nickname)
                 } else {
                     Log.e("API", "Response body is null")
-                    onResult(false, null)  // No data found
+                    onResult(false, null)
                 }
             } else {
                 Log.e("API", "Request failed with status: ${response.code()}")
@@ -162,7 +188,7 @@ fun fetchTeamInfo(teamNumber: String, context: android.content.Context, onResult
                 onResult(false, null)  // Mark failure
             }
         }
-
+        // If API call fails
         override fun onFailure(call: Call<TeamResponse>, t: Throwable) {
             Log.e("API", "Error: ${t.message}")
             onResult(false, null) // API call failed
