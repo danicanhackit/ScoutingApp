@@ -2,17 +2,17 @@ package com.example.scout.database
 
 import android.util.Log
 
-class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao) {
+class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, private val scoutingReportDao: ScoutingReportDao) {
 
     // Suspend keyword ensures functions run asynchronously to main thread
     suspend fun getFieldsForSection(section: String): List<ScoutingInputFields> {
         // Calls function on scoutingFieldDao
         return scoutingFieldDao.getFieldsForSection(section)
     }
-    suspend fun insertField(field: ScoutingInputFields) {
+    suspend fun insertFieldToScoutingInputFields(field: ScoutingInputFields) {
         scoutingFieldDao.insertField(field)
     }
-    suspend fun deleteField(field: ScoutingInputFields) {
+    suspend fun deleteFieldFromScoutingInputFields(field: ScoutingInputFields) {
         scoutingFieldDao.deleteField(field)
     }
 

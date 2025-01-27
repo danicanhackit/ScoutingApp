@@ -51,16 +51,18 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
 
 
     // Insert a new field into the database
-    fun insertField(field: ScoutingInputFields) {
+    fun insertFieldToScoutingInputFields(field: ScoutingInputFields) {
         viewModelScope.launch {
-            repository.insertField(field)
+            repository.insertFieldToScoutingInputFields(field)
         }
     }
 
     // Delete a field from the database
-    fun deleteField(field: ScoutingInputFields) {
+    fun deleteFieldFromScoutingInputFields(field: ScoutingInputFields) {
         viewModelScope.launch {
-            repository.deleteField(field)
+            repository.deleteFieldFromScoutingInputFields(field)
         }
     }
+
+
 }

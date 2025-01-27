@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +54,7 @@ fun Teleop(scoutingViewModel: ScoutingViewModel, navController: NavHostControlle
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .weight(1f)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -60,18 +63,27 @@ fun Teleop(scoutingViewModel: ScoutingViewModel, navController: NavHostControlle
             Text(text = "Teleop Period", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
-            fieldsForTeleop.forEach { field ->
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {}, // Handle value changes
-                    label = { Text(field.fieldName) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = { keyboardController?.hide()}
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+            // testing scrolling
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ){
+                fieldsForTeleop.forEach { field ->
+                    OutlinedTextField(
+                        value = "",
+                        onValueChange = {}, // Handle value changes
+                        label = { Text(field.fieldName) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = { keyboardController?.hide()}
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))

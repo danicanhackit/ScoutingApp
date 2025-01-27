@@ -142,7 +142,7 @@ fun addDataFieldToDatabase(
     fieldName: String,
     fieldInputType: String
     ) {
-    scoutingViewModel.insertField(
+    scoutingViewModel.insertFieldToScoutingInputFields(
         ScoutingInputFields(
             section = section,
             fieldName = fieldName,

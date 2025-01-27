@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             ScoutTheme {
                 val navController = rememberNavController()
                 val database = DatabaseProvider.getDatabase(applicationContext)
-                val scoutingRepository = ScoutingRepository(database.scoutingInputFieldsDao())
+                val scoutingRepository = ScoutingRepository(database.scoutingInputFieldsDao(), database.scoutingReportDao())
                 val scoutingViewModel: ScoutingViewModel by viewModels{
                     ScoutingViewModelFactory(scoutingRepository)
                 }

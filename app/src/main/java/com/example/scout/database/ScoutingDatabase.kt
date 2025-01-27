@@ -8,5 +8,6 @@ import androidx.room.RoomDatabase
 abstract class ScoutingDatabase : RoomDatabase() {
     // Database class must contain a method for each DAO
     abstract fun scoutingInputFieldsDao(): ScoutingInputFieldsDao
+    abstract fun scoutingReportDao(): ScoutingReportDao
 }
 
