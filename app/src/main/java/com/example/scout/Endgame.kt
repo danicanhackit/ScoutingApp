@@ -28,7 +28,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.scout.database.ScoutingReport
 import com.example.scout.viewmodels.ScoutingViewModel
+import com.example.scout.viewmodels.TeamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,7 +89,7 @@ fun Endgame(scoutingViewModel: ScoutingViewModel, navController: NavHostControll
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
-                        navController.navigate("eventSelection")
+                        navController.navigate("home")
                     },
                     modifier = Modifier.width(100.dp)
                 ) {
@@ -98,6 +100,24 @@ fun Endgame(scoutingViewModel: ScoutingViewModel, navController: NavHostControll
     }
 }
 
+fun addReportToDatabase(
+    scoutingViewModel: ScoutingViewModel,
+    reportId: Int,
+    teamViewModel: TeamViewModel,
+    section: String,
+    fieldName: String,
+    enteredValue: String
+    ){
+    scoutingViewModel.addScoutingReport(
+        ScoutingReport(
+            reportId = reportId,
+            teamNumberBeingScouted = teamViewModel.teamNumberBeingScouted,
+            gameplaySection = section,
+            fieldName = fieldName,
+            enteredValue = enteredValue
+        )
+    )
+}
 /*@Preview(showBackground = true)
 @Composable
 fun EndgamePreview(){

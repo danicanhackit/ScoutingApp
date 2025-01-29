@@ -9,8 +9,8 @@ data class ScoutingReport(
     // Primary key is simple integer that increases each time a row is added to the table
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val reportId: Int,
-    val teamNumberBeingScouted: Int,
-    val teamNameBeingScouted: String,
+    val teamNumberBeingScouted: Int?,
+    //val teamNameBeingScouted: String,
     // auton, teleop, endgame
     val gameplaySection: String,
     // need to write some sort of code that pulls in all the existing fields from the scoutinginputfields table

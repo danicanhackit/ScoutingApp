@@ -38,13 +38,14 @@ import androidx.navigation.testing.TestNavHostController
 import com.example.scout.ui.theme.Burgundy
 import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.viewmodels.TeamViewModel
 
 
 private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3MxVwS2OZtB7Mf"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddReport(navController: NavHostController){
+fun AddReport(teamViewModel: TeamViewModel, navController: NavHostController){
     var teamNum by remember { mutableStateOf(TextFieldValue(" "))}
     val keyboardController = LocalSoftwareKeyboardController.current
     Column {
@@ -91,7 +92,7 @@ fun AddReport(navController: NavHostController){
                     onClick = {
                         navController.navigate("home")
                     },
-                    modifier = Modifier.width(100.dp)
+                    modifier = Modifier.width(200.dp)
                 ) {
                     Text(text = "Cancel")
                 }
@@ -99,6 +100,7 @@ fun AddReport(navController: NavHostController){
                 Button(
                     onClick = {
                         // add fields to database
+                        teamViewModel.teamNumberBeingScouted = teamNum.text.toInt()
                         navController.navigate("autonomous")
                     },
                     modifier = Modifier.width(100.dp)
@@ -115,7 +117,8 @@ fun AddReport(navController: NavHostController){
 fun AddReportPreview(){
     ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
-        AddReport(navController)
+        val teamViewModel = TeamViewModel()
+        AddReport(teamViewModel, navController)
     }
 }
 

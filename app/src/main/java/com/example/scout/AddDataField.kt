@@ -53,7 +53,7 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
 
     //database variables
     val sectionToAddFieldTo = teamViewModel.dataFieldSection
-    var fieldInputType = ""
+    var fieldInputTypeToAdd = ""
     var fieldName by remember { mutableStateOf(TextFieldValue("")) }
 
     CenterAlignedTopAppBar(
@@ -111,7 +111,7 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
                         onClick = {
                             isDropDownExpanded.value = false
                             itemPosition.value = index
-                            fieldInputType = fieldTypeOption
+                            fieldInputTypeToAdd = fieldTypeOption
                         })
                 }
             }
@@ -125,7 +125,7 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
                     scoutingViewModel,
                     sectionToAddFieldTo,
                     fieldName.text,
-                    fieldInputType
+                    fieldInputTypeToAdd
                 )
             }
         },

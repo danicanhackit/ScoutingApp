@@ -13,8 +13,8 @@ interface ScoutingReportDao {
     suspend fun getAllScoutingReports(): List<ScoutingReport>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNewFieldToScoutingReport(field: ScoutingReport)
+    suspend fun addScoutingReport(field: ScoutingReport)
 
     @Delete
-    suspend fun deleteFieldsFromScoutingReport(field: ScoutingReport)
+    suspend fun deleteScoutingReport(field: ScoutingReport)
 }

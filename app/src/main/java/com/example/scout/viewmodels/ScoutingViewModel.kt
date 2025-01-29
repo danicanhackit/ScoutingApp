@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scout.database.ScoutingInputFields
+import com.example.scout.database.ScoutingReport
 import com.example.scout.database.ScoutingRepository
 import kotlinx.coroutines.launch
 
@@ -18,6 +19,7 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
 
     private val _fieldsForEndgame = MutableLiveData<List<ScoutingInputFields>>()
     val fieldsForEndgame: LiveData<List<ScoutingInputFields>> = _fieldsForEndgame
+
 
     // Call this function to preload the database with default fields
     init {
@@ -64,5 +66,16 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
         }
     }
 
+    fun addScoutingReport(field: ScoutingReport) {
+        viewModelScope.launch {
+            repository.addScoutingReport(field)
+        }
+    }
+
+    fun deleteScoutingReport(field: ScoutingReport) {
+        viewModelScope.launch {
+            repository.deleteScoutingReport(field)
+        }
+    }
 
 }

@@ -16,6 +16,14 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
         scoutingFieldDao.deleteField(field)
     }
 
+    suspend fun addScoutingReport(field: ScoutingReport){
+        scoutingReportDao.addScoutingReport(field)
+    }
+    suspend fun deleteScoutingReport(field: ScoutingReport){
+        scoutingReportDao.deleteScoutingReport(field)
+    }
+
+
     // Preload database with default fields if necessary
     suspend fun preloadDatabase() {
             val sections = listOf("Autonomous", "Teleop", "Endgame")
