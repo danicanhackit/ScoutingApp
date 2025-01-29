@@ -10,7 +10,7 @@ import androidx.room.Query
 interface ScoutingReportDao {
 
     @Query("SELECT * FROM ScoutingReport")
-    suspend fun getAllScoutingReports()
+    suspend fun getAllScoutingReports(): List<ScoutingReport>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNewFieldToScoutingReport(field: ScoutingReport)
