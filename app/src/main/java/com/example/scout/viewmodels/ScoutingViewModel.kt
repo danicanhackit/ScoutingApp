@@ -20,6 +20,7 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     private val _fieldsForEndgame = MutableLiveData<List<ScoutingInputFields>>()
     val fieldsForEndgame: LiveData<List<ScoutingInputFields>> = _fieldsForEndgame
 
+    var reportId: Int = 0
 
     // Call this function to preload the database with default fields
     init {

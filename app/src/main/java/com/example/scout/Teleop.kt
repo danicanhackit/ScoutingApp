@@ -23,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -31,10 +33,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.scout.viewmodels.ScoutingViewModel
+import com.example.scout.viewmodels.TeamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Teleop(scoutingViewModel: ScoutingViewModel, navController: NavHostController){
+fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController){
+    val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
     val fieldsForTeleop by scoutingViewModel.fieldsForTeleop.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) {
@@ -73,8 +77,12 @@ fun Teleop(scoutingViewModel: ScoutingViewModel, navController: NavHostControlle
             ){
                 fieldsForTeleop.forEach { field ->
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = {}, // Handle value changes
+                        value = fieldValues.value[field.fieldName]?:"",
+                        onValueChange = { newValue ->
+                            fieldValues.value = fieldValues.value.toMutableMap().apply{
+                                put(field.fieldName, newValue)
+                            }
+                        },// Handle value changes
                         label = { Text(field.fieldName) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
@@ -99,6 +107,17 @@ fun Teleop(scoutingViewModel: ScoutingViewModel, navController: NavHostControlle
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
+                        fieldsForTeleop.forEach { field ->
+                            val userInput = fieldValues.value[field.fieldName]?:""
+                            addReportToDatabase(
+                                scoutingViewModel,
+                                scoutingViewModel.reportId,
+                                teamViewModel,
+                                "Teleop",
+                                field.fieldName,
+                                userInput
+                            )
+                        }
                         navController.navigate("endgame")
                     },
                     modifier = Modifier.width(100.dp)

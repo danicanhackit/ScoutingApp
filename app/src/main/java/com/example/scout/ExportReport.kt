@@ -38,12 +38,9 @@ import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.TeamViewModel
 
 
-private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3MxVwS2OZtB7Mf"
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController){
-    var teamNum by remember { mutableStateOf(TextFieldValue(" "))}
+fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController){
     val keyboardController = LocalSoftwareKeyboardController.current
     Column {
         CenterAlignedTopAppBar(
@@ -63,47 +60,25 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // update for actual event name
-            Text(text = "Add Report", style = MaterialTheme.typography.headlineLarge)
-            Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
-                value = teamNum,
-                onValueChange = { teamNum = it },
-                label = { Text("Team Being Scouted", color = Burgundy)},
-                textStyle = TextStyle(color = Burgundy),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = { keyboardController?.hide()}
-                ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = PlatyRed,
-                    unfocusedBorderColor = Burgundy,
-                    cursorColor = Burgundy
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
             Spacer(modifier = Modifier.height(20.dp))
             Row {
                 Button(
                     onClick = {
-                        navController.navigate("home")
+                        // export file
                     },
                     modifier = Modifier.width(200.dp)
                 ) {
-                    Text(text = "Cancel")
+                    Text(text = "Export")
                 }
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
-                        // add fields to database
-                        teamViewModel.teamNumberBeingScouted = teamNum.text.toInt()
-                        scoutingViewModel.reportId += 1
-                        navController.navigate("autonomous")
+                        navController.navigate("home")
                     },
                     modifier = Modifier.width(100.dp)
                 ) {
-                    Text(text = "Next")
+                    Text(text = "Home")
                 }
             }
         }
@@ -112,7 +87,7 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
 
 /*@Preview(showBackground = true)
 @Composable
-fun AddReportPreview(){
+fun ExportReportPreview(){
     ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
         val teamViewModel = TeamViewModel()

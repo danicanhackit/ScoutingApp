@@ -53,12 +53,14 @@ fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingV
         composable("eventSelection") { EventSelection(teamViewModel, navController)}
         composable("home") { Home(teamViewModel, navController)}
 
-        composable("addReport"){ AddReport(teamViewModel, navController)}
+        composable("addReport"){ AddReport(teamViewModel, scoutingViewModel, navController)}
         composable("autonomous") { Autonomous(teamViewModel, scoutingViewModel, navController)}
-        composable("teleop") { Teleop(scoutingViewModel, navController)}
-        composable("endgame") { Endgame(scoutingViewModel, navController)}
+        composable("teleop") { Teleop(teamViewModel, scoutingViewModel, navController)}
+        composable("endgame") { Endgame(teamViewModel, scoutingViewModel, navController)}
+        composable("exportReport") { ExportReport(navController)}
     }
 }
+
 
 
 

@@ -36,6 +36,7 @@ import com.example.scout.viewmodels.TeamViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController) {
+
     // Initialize state for each input field, one per data field
     val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
 
@@ -76,8 +77,12 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
             // Iterate over the fields for the autonomous section and create number input fields
             fieldsForAutonomous.forEach { field ->
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = fieldValues.value[field.fieldName]?:"",
+                    onValueChange = { newValue ->
+                        fieldValues.value = fieldValues.value.toMutableMap().apply{
+                            put(field.fieldName, newValue)
+                        }
+                    },
                     label = { Text(field.fieldName) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
@@ -101,7 +106,17 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
-                        // Add fields to database or continue to next screen
+                        fieldsForAutonomous.forEach { field ->
+                            val userInput = fieldValues.value[field.fieldName]?:""
+                            addReportToDatabase(
+                                scoutingViewModel,
+                                scoutingViewModel.reportId,
+                                teamViewModel,
+                                "Autonomous",
+                                field.fieldName,
+                                userInput
+                            )
+                        }
                         navController.navigate("teleop")
                     },
                     modifier = Modifier.width(100.dp)
@@ -112,6 +127,7 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
         }
     }
 }
+
 
 /*@Preview(showBackground = true)
 @Composable
