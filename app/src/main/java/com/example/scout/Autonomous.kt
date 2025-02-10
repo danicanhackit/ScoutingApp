@@ -76,9 +76,11 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
 
             // Iterate over the fields for the autonomous section and create number input fields
             fieldsForAutonomous.forEach { field ->
+                val textState = remember { mutableStateOf("") }
                 OutlinedTextField(
-                    value = fieldValues.value[field.fieldName]?:"",
+                    value = textState.value,
                     onValueChange = { newValue ->
+                        textState.value = newValue
                         fieldValues.value = fieldValues.value.toMutableMap().apply{
                             put(field.fieldName, newValue)
                         }

@@ -97,7 +97,7 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                 Button(
                     onClick = {
                         // add fields to database
-                        teamViewModel.teamNumberBeingScouted = teamNum.text.toInt()
+                        //teamViewModel.teamNumberBeingScouted = teamNum.text.toInt()
                         scoutingViewModel.reportId += 1
                         navController.navigate("autonomous")
                     },

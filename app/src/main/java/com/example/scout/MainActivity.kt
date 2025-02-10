@@ -57,7 +57,7 @@ fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingV
         composable("autonomous") { Autonomous(teamViewModel, scoutingViewModel, navController)}
         composable("teleop") { Teleop(teamViewModel, scoutingViewModel, navController)}
         composable("endgame") { Endgame(teamViewModel, scoutingViewModel, navController)}
-        composable("exportReport") { ExportReport(navController)}
+        composable("exportReport") { ExportReport(teamViewModel, scoutingViewModel, navController)}
     }
 }
 
