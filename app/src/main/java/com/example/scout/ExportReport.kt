@@ -1,5 +1,6 @@
 package com.example.scout
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -42,6 +44,7 @@ import com.example.scout.viewmodels.TeamViewModel
 @Composable
 fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController){
     val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
     Column {
         CenterAlignedTopAppBar(
             title = {
@@ -66,6 +69,8 @@ fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
                 Button(
                     onClick = {
                         // export file
+                        scoutingViewModel.exportReportById(context, scoutingViewModel.reportId)
+                        Toast.makeText(context, "CSV Exported!", Toast.LENGTH_LONG).show()
                     },
                     modifier = Modifier.width(200.dp)
                 ) {

@@ -70,9 +70,11 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
             Spacer(modifier = Modifier.height(20.dp))
 
             fieldsForEndgame.forEach { field ->
+                val textState = remember {mutableStateOf("")}
                 OutlinedTextField(
-                    value = fieldValues.value[field.fieldName]?:"",
+                    value = textState.value,
                     onValueChange = { newValue ->
+                        textState.value = newValue
                         fieldValues.value = fieldValues.value.toMutableMap().apply{
                             put(field.fieldName, newValue)
                         }

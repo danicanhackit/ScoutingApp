@@ -1,6 +1,8 @@
 package com.example.scout.database
 
+import android.content.Context
 import android.util.Log
+import com.example.scout.files.FileUtils
 
 class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, private val scoutingReportDao: ScoutingReportDao) {
 
@@ -22,6 +24,14 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
     suspend fun deleteScoutingReport(field: ScoutingReport){
         scoutingReportDao.deleteScoutingReport(field)
     }
+
+    suspend fun exportReportById(context: Context, reportId: Int) {
+        val reports = scoutingReportDao.getReportsById(reportId) // Fetch reports from the database
+        if (reports.isNotEmpty()) {
+            FileUtils.exportDatabaseToCSV(context, "scouting_report_$reportId.csv", reports)
+        }
+    }
+
 
     // Preload database with default fields if necessary
     suspend fun preloadDatabase() {

@@ -76,9 +76,11 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
                     .verticalScroll(rememberScrollState())
             ){
                 fieldsForTeleop.forEach { field ->
+                    val textState = remember {mutableStateOf("")}
                     OutlinedTextField(
-                        value = fieldValues.value[field.fieldName]?:"",
+                        value = textState.value,
                         onValueChange = { newValue ->
+                            textState.value = newValue
                             fieldValues.value = fieldValues.value.toMutableMap().apply{
                                 put(field.fieldName, newValue)
                             }

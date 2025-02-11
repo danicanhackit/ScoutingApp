@@ -1,5 +1,6 @@
 package com.example.scout.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -76,6 +77,12 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     fun deleteScoutingReport(field: ScoutingReport) {
         viewModelScope.launch {
             repository.deleteScoutingReport(field)
+        }
+    }
+
+    fun exportReportById(context: Context, reportId: Int){
+        viewModelScope.launch {
+            repository.exportReportById(context, reportId)
         }
     }
 
