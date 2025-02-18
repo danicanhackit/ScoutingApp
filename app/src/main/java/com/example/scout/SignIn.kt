@@ -137,6 +137,7 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
                     fetchTeamInfo(teamNumber.text, context) { success, nickname -> // Nickname from onSuccess function
                         if (success && nickname != null) {
                             teamViewModel.teamNumber = teamNumber.text
+                            teamViewModel.teamNickname = nickname
                             // Toast is a widget library used for pop-up notifications
                             Toast.makeText(
                                 context,
@@ -146,7 +147,9 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
                                 Toast.LENGTH_SHORT
                             ).show()
                             teamViewModel.year = year.text.toInt()
-                            navController.navigate("start/${scouterName.text}/${nickname}")
+                            teamViewModel.scouterName = scouterName.toString()
+
+                            navController.navigate("start")
                         } else {
                             Toast.makeText(context, "Invalid team number. Please try again.", Toast.LENGTH_SHORT).show()
                         }

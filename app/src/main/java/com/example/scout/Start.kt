@@ -21,10 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.testing.TestNavHostController
 import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.viewmodels.TeamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartScreen(scouterName: String, teamName: String, navController: NavHostController) {
+fun StartScreen(teamViewModel: TeamViewModel, navController: NavHostController) {
+    val scouterName = teamViewModel.scouterName
+    val teamNickname = teamViewModel.teamNickname
     Column (
         modifier = Modifier.fillMaxSize()
     ){
@@ -41,16 +44,19 @@ fun StartScreen(scouterName: String, teamName: String, navController: NavHostCon
         ) {
             Text(text = "Welcome, $scouterName!", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = teamName, style = MaterialTheme.typography.headlineMedium)
+            if (teamNickname != null) {
+                Text(text = teamNickname, style = MaterialTheme.typography.headlineMedium)
+            }
             Spacer(modifier = Modifier.height(20.dp))
             Button(onClick = {
-                navController.navigate("eventSelection")
+                navController.navigate("home")
             },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Select Event")
             }
 
+            // haven't coded this screen yet but not sure if I need to
             Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
                 navController.navigate("displayData")
@@ -77,6 +83,7 @@ fun StartScreen(scouterName: String, teamName: String, navController: NavHostCon
 fun StartScreenPreview(){
     ScoutTheme{
         val navController = TestNavHostController(LocalContext.current)
-        StartScreen(scouterName = "Dani", "PlatyPirates", navController)
+        val teamViewModel = TeamViewModel()
+        StartScreen(teamViewModel, navController)
     }
 }

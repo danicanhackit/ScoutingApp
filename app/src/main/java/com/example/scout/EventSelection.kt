@@ -121,8 +121,8 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
 
         Spacer(modifier = Modifier.height(100.dp))
         Button(onClick = {
-            Log.d("NAME", eventName)
-            Log.d("MODEL", teamViewModel.eventName!!)
+            //Log.d("NAME", eventName)
+           // Log.d("MODEL", teamViewModel.eventName!!)
             navController.navigate("home")
         }) {
             Text(text = "Confirm")
