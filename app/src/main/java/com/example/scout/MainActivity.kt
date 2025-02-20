@@ -1,10 +1,12 @@
 package com.example.scout
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
                 val scoutingViewModel: ScoutingViewModel by viewModels{
                     ScoutingViewModelFactory(scoutingRepository)
                 }
+                Log.d("FILE PATH", LocalContext.current.getExternalFilesDir(null).toString())
                 AppNavigation(navController, scoutingViewModel)
             }
         }
@@ -38,21 +41,19 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingViewModel) {
     val teamViewModel: TeamViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = "signIn") {
+    NavHost(navController = navController, startDestination = "start") {
+        // Signing in
         composable("signIn") { SignIn(teamViewModel, navController) }
-        composable("start/{scouterName}/{teamNickname}") { backStackEntry ->
-            val scouterName = backStackEntry.arguments?.getString("scouterName") ?: ""
-            val teamNickname = backStackEntry.arguments?.getString("teamNickname") ?: ""
-            StartScreen(scouterName, teamNickname, navController)
-        }
+        composable("start") { StartScreen(teamViewModel, navController) }
+        // Edit data field screens
         composable("editDataFields") { EditDataFields(navController)}
         composable("removeDataFieldMenu") { RemoveDataFieldMenu(navController)}
         composable("addDataFieldMenu") { AddDataFieldMenu(teamViewModel, navController)}
         composable("addDataField") { AddDataField(teamViewModel, scoutingViewModel, navController)}
-
+        // Home
         composable("eventSelection") { EventSelection(teamViewModel, navController)}
         composable("home") { Home(teamViewModel, navController)}
-
+        // Adding report screens
         composable("addReport"){ AddReport(teamViewModel, scoutingViewModel, navController)}
         composable("autonomous") { Autonomous(teamViewModel, scoutingViewModel, navController)}
         composable("teleop") { Teleop(teamViewModel, scoutingViewModel, navController)}

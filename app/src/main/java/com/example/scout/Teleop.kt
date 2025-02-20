@@ -18,6 +18,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,10 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.scout.ui.theme.Burgundy
+import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.TeamViewModel
 
@@ -86,9 +90,15 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
                             }
                         },// Handle value changes
                         label = { Text(field.fieldName) },
+                        textStyle = TextStyle(color = Burgundy),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
                             onDone = { keyboardController?.hide()}
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            cursorColor = Burgundy,
+                            focusedBorderColor = PlatyRed,
+                            unfocusedBorderColor = Burgundy,
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )

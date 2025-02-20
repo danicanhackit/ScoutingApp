@@ -13,7 +13,7 @@ interface ScoutingReportDao {
     suspend fun getAllScoutingReports(): List<ScoutingReport>
 
     @Query("SELECT * FROM ScoutingReport WHERE reportId = :reportId")
-    suspend fun getReportsById(reportId: Int): List<ScoutingReport>
+    suspend fun getReportsById(reportId: String): List<ScoutingReport>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addScoutingReport(field: ScoutingReport)

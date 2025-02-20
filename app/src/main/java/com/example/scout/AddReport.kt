@@ -16,6 +16,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -76,10 +77,10 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                 keyboardActions = KeyboardActions(
                     onDone = { keyboardController?.hide()}
                 ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = Burgundy,
                     focusedBorderColor = PlatyRed,
                     unfocusedBorderColor = Burgundy,
-                    cursorColor = Burgundy
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -98,7 +99,7 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                     onClick = {
                         // add fields to database
                         //teamViewModel.teamNumberBeingScouted = teamNum.text.toInt()
-                        scoutingViewModel.reportId += 1
+                        scoutingViewModel.reportId = scoutingViewModel.generateReportId()
                         navController.navigate("autonomous")
                     },
                     modifier = Modifier.width(100.dp)

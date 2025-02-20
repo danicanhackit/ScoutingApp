@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.identity.util.UUID
 import com.example.scout.database.ScoutingInputFields
 import com.example.scout.database.ScoutingReport
 import com.example.scout.database.ScoutingRepository
@@ -21,7 +22,7 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     private val _fieldsForEndgame = MutableLiveData<List<ScoutingInputFields>>()
     val fieldsForEndgame: LiveData<List<ScoutingInputFields>> = _fieldsForEndgame
 
-    var reportId: Int = 0
+    var reportId: String = ""
 
     // Call this function to preload the database with default fields
     init {
@@ -80,10 +81,14 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
         }
     }
 
-    fun exportReportById(context: Context, reportId: Int){
+    fun exportReportById(context: Context, reportId: String){
         viewModelScope.launch {
             repository.exportReportById(context, reportId)
         }
+    }
+
+    fun generateReportId(): String {
+        return UUID.randomUUID().toString() // Generates a unique string every time
     }
 
 }
