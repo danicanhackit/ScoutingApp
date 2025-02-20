@@ -41,13 +41,14 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingViewModel) {
     val teamViewModel: TeamViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = "start") {
+    NavHost(navController = navController, startDestination = "signIn") {
         // Signing in
         composable("signIn") { SignIn(teamViewModel, navController) }
         composable("start") { StartScreen(teamViewModel, navController) }
         // Edit data field screens
         composable("editDataFields") { EditDataFields(navController)}
         composable("removeDataFieldMenu") { RemoveDataFieldMenu(navController)}
+        composable("removeDataField") { RemoveDataField(scoutingViewModel, navController)}
         composable("addDataFieldMenu") { AddDataFieldMenu(teamViewModel, navController)}
         composable("addDataField") { AddDataField(teamViewModel, scoutingViewModel, navController)}
         // Home

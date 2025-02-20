@@ -66,6 +66,8 @@ fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
             Text(text = "New Scouting Report")
         }
 
+        // haven't coded this screen but i'm not sure if i need to
+        /*
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
             navController.navigate("displayData")
@@ -73,7 +75,7 @@ fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Event Data")
-        }
+        }*/
     }
 }
 

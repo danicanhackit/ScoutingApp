@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -97,8 +96,8 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
-                        // add fields to database
-                        //teamViewModel.teamNumberBeingScouted = teamNum.text.toInt()
+                        val userInput = teamNum.text.trim()
+                        teamViewModel.teamNumberBeingScouted = userInput.toIntOrNull() ?: 0
                         scoutingViewModel.reportId = scoutingViewModel.generateReportId()
                         navController.navigate("autonomous")
                     },
