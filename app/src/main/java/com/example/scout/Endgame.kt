@@ -13,11 +13,14 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -27,12 +30,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.scout.database.ScoutingReport
+import com.example.scout.ui.theme.Burgundy
+import com.example.scout.ui.theme.Cream
+import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.TeamViewModel
 
@@ -80,9 +88,15 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                         }
                     },// Handle value changes
                     label = { Text(field.fieldName) },
+                    textStyle = TextStyle(color = Burgundy),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
                         onDone = { keyboardController?.hide()}
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = Burgundy,
+                        focusedBorderColor = PlatyRed,
+                        unfocusedBorderColor = Burgundy,
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -90,7 +104,7 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
             }
 
             if(showDialog.value){
-                DrawConfirmNotification(showDialog)
+                DrawConfirmNotification(showDialog, navController)
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -118,9 +132,9 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                             )
                         }
                         showDialog.value = true
-                        navController.navigate("exportReport")
+                        //navController.navigate("exportReport")
                     },
-                    modifier = Modifier.width(100.dp)
+                    modifier = Modifier.width(150.dp)
                 ) {
                     Text(text = "Confirm")
                 }
@@ -130,31 +144,45 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
 }
 
 @Composable
-fun DrawConfirmNotification(showDialog: MutableState<Boolean>){
+fun DrawConfirmNotification(showDialog: MutableState<Boolean>, navController: NavHostController){
     AlertDialog(
         onDismissRequest = {
             showDialog.value = false
         },
         title = { Text(text = "Confirm Submission")},
-        text = { Text(text = "Please press confirm to finalize all fields")},
+        text = { Text(text = "Please press confirm to finalize all fields", color = Color.White)},
         confirmButton = {
-            Button(
+            TextButton(
                 onClick = {
-                    showDialog.value = false
-                }
-            ) {
-                Text(
-                    text = "Confirm"
+                    //showDialog.value = false
+                    navController.navigate("exportReport")
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Cream
                 )
+            ) {
+                Text("Confirm")
             }
 
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    showDialog.value = false
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Cream
+                )
+            ) {
+                Text("Cancel")
+            }
         }
     )
 }
 
 fun addReportToDatabase(
     scoutingViewModel: ScoutingViewModel,
-    reportId: Int,
+    reportId: String,
     teamViewModel: TeamViewModel,
     section: String,
     fieldName: String,

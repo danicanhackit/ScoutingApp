@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
@@ -118,14 +119,18 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
                 }
             }
         }
-
         Spacer(modifier = Modifier.height(100.dp))
         Button(onClick = {
-            //Log.d("NAME", eventName)
-           // Log.d("MODEL", teamViewModel.eventName!!)
             navController.navigate("home")
         }) {
             Text(text = "Confirm")
+        }
+        Spacer(modifier = Modifier.height(100.dp))
+        Button(onClick = {
+            navController.navigate("start")
+        }, modifier = Modifier.width(400.dp)
+        ) {
+            Text(text = "Back to Start Menu")
         }
     }
 }

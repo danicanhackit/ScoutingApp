@@ -25,7 +25,7 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
         scoutingReportDao.deleteScoutingReport(field)
     }
 
-    suspend fun exportReportById(context: Context, reportId: Int) {
+    suspend fun exportReportById(context: Context, reportId: String) {
         val reports = scoutingReportDao.getReportsById(reportId) // Fetch reports from the database
         if (reports.isNotEmpty()) {
             FileUtils.exportDatabaseToCSV(context, "scouting_report_$reportId.csv", reports)

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class ScoutingReport(
     // Primary key is simple integer that increases each time a row is added to the table
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val reportId: Int,
+    val reportId: String,
     val teamNumberBeingScouted: Int?,
     //val teamNameBeingScouted: String,
     // auton, teleop, endgame
