@@ -1,6 +1,7 @@
 package com.example.scout.viewmodels
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,8 @@ import com.android.identity.util.UUID
 import com.example.scout.database.ScoutingInputFields
 import com.example.scout.database.ScoutingReport
 import com.example.scout.database.ScoutingRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel() {
@@ -22,7 +25,22 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     private val _fieldsForEndgame = MutableLiveData<List<ScoutingInputFields>>()
     val fieldsForEndgame: LiveData<List<ScoutingInputFields>> = _fieldsForEndgame
 
+    val allInputFieldNames: LiveData<List<String>> = repository.allInputFieldNames
+
+    private val _selectedField = MutableStateFlow<ScoutingInputFields?>(null)
+    val selectedField: StateFlow<ScoutingInputFields?> = _selectedField
+
+    private val _reportsBySection = MutableLiveData<List<ScoutingReport>>()
+    val reportsBySection: LiveData<List<ScoutingReport>> = _reportsBySection
+
+    private val _reportsByTeamNum = MutableLiveData<List<ScoutingReport>>()
+    val reportsByTeamNum: LiveData<List<ScoutingReport>> = _reportsByTeamNum
+
+    private val _reportsById = MutableLiveData<List<ScoutingReport>>()
+    val reportsById: LiveData<List<ScoutingReport>> = _reportsById
+
     var reportId: String = ""
+    var fieldToDelete: String? = null
 
     // Call this function to preload the database with default fields
     init {
@@ -50,7 +68,7 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     fun loadFieldsForEndgame() {
         viewModelScope.launch {
             val fields = repository.getFieldsForSection("Endgame")
-            _fieldsForTeleop.postValue(fields)
+            _fieldsForEndgame.postValue(fields)
         }
     }
 
@@ -66,6 +84,34 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     fun deleteFieldFromScoutingInputFields(field: ScoutingInputFields) {
         viewModelScope.launch {
             repository.deleteFieldFromScoutingInputFields(field)
+        }
+    }
+
+    fun fetchFieldByFieldName(fieldName: String) {
+        viewModelScope.launch {
+            val field: ScoutingInputFields = repository.getFieldByFieldName(fieldName)
+            _selectedField.value = field
+        }
+    }
+
+    fun getReportFieldsBySection(id: String, section: String){
+        viewModelScope.launch {
+            val fields = repository.getReportsByIdAndSection(id, section)
+            _reportsBySection.postValue(fields)
+        }
+    }
+
+    fun getReportFieldsByTeamNum(id: String, teamNum: Int?){
+        viewModelScope.launch {
+            val fields = repository.getReportsByIdAndTeamNum(id, teamNum)
+            _reportsByTeamNum.postValue(fields)
+        }
+    }
+
+    fun getReportsById(id: String){
+        viewModelScope.launch {
+            val fields = repository.getReportsById(id)
+            _reportsById.postValue(fields)
         }
     }
 

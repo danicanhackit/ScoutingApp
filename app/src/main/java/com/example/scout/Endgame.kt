@@ -1,5 +1,6 @@
 package com.example.scout
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,9 +52,11 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
     val fieldsForEndgame by scoutingViewModel.fieldsForEndgame.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
     val showDialog = remember { mutableStateOf(false)}
+    val reportSectionsToDelete by scoutingViewModel.reportsBySection.observeAsState(emptyList())
 
     LaunchedEffect(Unit) {
         scoutingViewModel.loadFieldsForEndgame()
+        scoutingViewModel.getReportFieldsBySection(scoutingViewModel.reportId, "Teleop")
     }
     Column {
         CenterAlignedTopAppBar(
@@ -111,6 +114,9 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
             Row {
                 Button(
                     onClick = {
+                        reportSectionsToDelete.forEach { reportSection ->
+                            scoutingViewModel.deleteScoutingReport(reportSection)
+                        }
                         navController.navigate("teleop")
                     },
                     modifier = Modifier.width(100.dp)
@@ -132,7 +138,6 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                             )
                         }
                         showDialog.value = true
-                        //navController.navigate("exportReport")
                     },
                     modifier = Modifier.width(150.dp)
                 ) {

@@ -47,7 +47,7 @@ fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingV
         composable("start") { StartScreen(teamViewModel, navController) }
         // Edit data field screens
         composable("editDataFields") { EditDataFields(navController)}
-        composable("removeDataFieldMenu") { RemoveDataFieldMenu(navController)}
+        composable("removeDataFieldMenu") { RemoveDataFieldMenu(scoutingViewModel, navController)}
         composable("removeDataField") { RemoveDataField(scoutingViewModel, navController)}
         composable("addDataFieldMenu") { AddDataFieldMenu(teamViewModel, navController)}
         composable("addDataField") { AddDataField(teamViewModel, scoutingViewModel, navController)}

@@ -53,7 +53,7 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
 
     //database variables
     val sectionToAddFieldTo = teamViewModel.dataFieldSection
-    var fieldInputTypeToAdd = ""
+    var fieldInputTypeToAdd by remember { mutableStateOf("") }
     var fieldName by remember { mutableStateOf(TextFieldValue("")) }
 
     CenterAlignedTopAppBar(
@@ -119,6 +119,8 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
         Spacer(modifier = Modifier.height(50.dp))
         Button(onClick = {
             navController.navigate("addDataFieldMenu")
+
+            // need to add a cancel button
 
             if(sectionToAddFieldTo != null) {
                 addDataFieldToDatabase(

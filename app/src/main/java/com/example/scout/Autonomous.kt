@@ -50,9 +50,12 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
     // Accesses only autonomous fields from database through scoutingViewModel
     val fieldsForAutonomous by scoutingViewModel.fieldsForAutonomous.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
+    val reportSectionsToDelete by scoutingViewModel.reportsByTeamNum.observeAsState(emptyList())
+
     LaunchedEffect(Unit) {
         // Calls loadFieldsForAutonomous method from ScoutingViewModel
         scoutingViewModel.loadFieldsForAutonomous()
+        scoutingViewModel.getReportFieldsByTeamNum(scoutingViewModel.reportId, teamViewModel.teamNumberBeingScouted)
     }
     Column(modifier = Modifier.fillMaxSize()) {
         CenterAlignedTopAppBar(
@@ -111,7 +114,10 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
             Row {
                 Button(
                     onClick = {
-                        navController.navigate("home")
+                        reportSectionsToDelete.forEach { reportSection ->
+                            scoutingViewModel.deleteScoutingReport(reportSection)
+                        }
+                        navController.navigate("addReport")
                     },
                     modifier = Modifier.width(200.dp)
                 ) {

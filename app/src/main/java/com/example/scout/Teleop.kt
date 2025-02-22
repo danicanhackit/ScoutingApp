@@ -45,8 +45,11 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
     val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
     val fieldsForTeleop by scoutingViewModel.fieldsForTeleop.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
+    val reportSectionsToDelete by scoutingViewModel.reportsBySection.observeAsState(emptyList())
+
     LaunchedEffect(Unit) {
         scoutingViewModel.loadFieldsForTeleop()
+        scoutingViewModel.getReportFieldsBySection(scoutingViewModel.reportId, "Autonomous")
     }
     Column {
         CenterAlignedTopAppBar(
@@ -110,6 +113,9 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
             Row {
                 Button(
                     onClick = {
+                        reportSectionsToDelete.forEach { reportSection ->
+                            scoutingViewModel.deleteScoutingReport(reportSection)
+                        }
                         navController.navigate("autonomous")
                     },
                     modifier = Modifier.width(100.dp)
