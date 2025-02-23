@@ -40,8 +40,6 @@ import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.TeamViewModel
 
 
-private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3MxVwS2OZtB7Mf"
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController){
@@ -71,7 +69,6 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // update for actual event name
             Text(text = "Add Report", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -98,9 +95,8 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                         reportSectionsToDelete.forEach { reportSection ->
                             scoutingViewModel.deleteScoutingReport(reportSection)
                         }
-                        navController.navigate("home")
-                    },
-                    modifier = Modifier.width(200.dp)
+                        navController.navigate("start")
+                    }
                 ) {
                     Text(text = "Cancel")
                 }
@@ -113,8 +109,7 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                         // team being scouted but go back to the same report
                         scoutingViewModel.reportId = scoutingViewModel.generateReportId()
                         navController.navigate("autonomous")
-                    },
-                    modifier = Modifier.width(100.dp)
+                    }
                 ) {
                     Text(text = "Next")
                 }

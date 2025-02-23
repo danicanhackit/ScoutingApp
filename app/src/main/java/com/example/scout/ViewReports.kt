@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,11 +13,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.navigation.NavHostController
+import androidx.navigation.testing.TestNavHostController
+import com.example.scout.ui.theme.Cream
+import com.example.scout.ui.theme.ScoutTheme
+import com.example.scout.viewmodels.TeamViewModel
 import java.io.File
 
 // need to add top bar with 9181 platy
@@ -29,7 +36,9 @@ fun ViewReports(navController: NavHostController) {
     val scoutingReportsDir = File(context.getExternalFilesDir(null), "ScoutingReports")
 
     // Get the list of CSV files
-    val csvFiles = remember { scoutingReportsDir.listFiles()?.filter { it.extension == "csv" } ?: emptyList() }
+    val csvFiles = remember { mutableStateListOf(*scoutingReportsDir.listFiles()?.filter { it.extension == "csv" }?.toTypedArray() ?: emptyArray()) }
+
+    //val csvFiles = remember { scoutingReportsDir.listFiles()?.filter { it.extension == "csv" } ?: emptyList() }
     Column (
         modifier = Modifier.fillMaxSize()
     ) {
@@ -54,21 +63,29 @@ fun ViewReports(navController: NavHostController) {
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(5.dp))
-            Button(
-                onClick = {
-                    navController.navigate("start")
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Back")
+            Row{
+                Button(
+                    onClick = {
+                        navController.navigate("start")
+                    }
+                ) {
+                    Text(text = "Back")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = { exportToUsb(context, csvFiles) }) {
+                    Text(text = "Export All to USB")
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
+
             if (csvFiles.isEmpty()) {
                 Text(text = "No CSV files found.", style = MaterialTheme.typography.bodyLarge)
             } else {
                 LazyColumn {
                     items(csvFiles) { file ->
-                        FileItem(file, context)
+                        FileItem(file, context) { deletedFile ->
+                            csvFiles.remove(deletedFile)
+                        }
                     }
                 }
             }
@@ -77,7 +94,9 @@ fun ViewReports(navController: NavHostController) {
 }
 
 @Composable
-fun FileItem(file: File, context: Context) {
+fun FileItem(file: File, context: Context, onDelete: (File) -> Unit) {
+    val showDialog = remember { mutableStateOf(false)}
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,6 +104,10 @@ fun FileItem(file: File, context: Context) {
             .clickable { openFile(context, file) },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
+        if(showDialog.value){
+            DrawConfirmDeleteReportNotification(file, showDialog, onDelete)
+        }
+
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -94,11 +117,67 @@ fun FileItem(file: File, context: Context) {
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
-            Button(onClick = { shareFile(context, file) }) {
-                Text(text = "Share")
+            Spacer(modifier = Modifier.width(8.dp))
+            Column (
+                modifier = Modifier.padding(5.dp)
+            ){
+                Button(onClick = { shareFile(context, file) }) {
+                    Text(text = "Share")
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                Button(onClick = { showDialog.value = true }) {
+                    Text(text = "Delete")
+                }
             }
         }
     }
+}
+
+@Composable
+fun DrawConfirmDeleteReportNotification(
+    file: File,
+    showDialog: MutableState<Boolean>,
+    onDelete: (File) -> Unit
+){
+    AlertDialog(
+        onDismissRequest = {
+            showDialog.value = false
+        },
+        title = { Text(text = "Confirm Delete")},
+        text = { Text(text = "Please press confirm to delete this scouting report. This cannot be undone!", color = Color.White)},
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    deleteFile(file)
+                    onDelete(file)
+                    //Toast.makeText(LocalContext.current, "File Successfully Deleted!", Toast.LENGTH_LONG).show()
+                    showDialog.value = false
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Cream
+                )
+            ) {
+                Text("Confirm")
+            }
+
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    showDialog.value = false
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Cream
+                )
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+fun deleteFile(file: File){
+    file.delete()
 }
 
 fun openFile(context: Context, file: File) {
@@ -118,4 +197,47 @@ fun shareFile(context: Context, file: File) {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     context.startActivity(Intent.createChooser(intent, "Share CSV File"))
+}
+
+fun exportToUsb(context: Context, csvFiles: List<File>) {
+    val usbPath = detectUsbPath() // Detect USB mount point
+    if (usbPath == null) {
+        Toast.makeText(context, "No USB drive detected", Toast.LENGTH_LONG).show()
+        return
+    }
+
+    val usbDir = File(usbPath, "ScoutingReports")
+    if (!usbDir.exists()) {
+        usbDir.mkdirs() // Create the directory if it doesn't exist
+    }
+
+    var successCount = 0
+
+    for (file in csvFiles) {
+        val destFile = File(usbDir, file.name)
+        try {
+            file.copyTo(destFile, overwrite = true)
+            successCount++
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    Toast.makeText(context, "Exported $successCount files to USB", Toast.LENGTH_LONG).show()
+}
+
+fun detectUsbPath(): String? {
+    val possiblePaths = File("/storage").listFiles()?.map { it.absolutePath }
+    return possiblePaths?.find { it.contains("usb") || it.matches(Regex("/storage/[0-9A-F]{4}-[0-9A-F]{4}")) }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun ViewReportsPreview(){
+    ScoutTheme{
+        val navController = TestNavHostController(LocalContext.current)
+        ViewReports(navController)
+    }
 }
