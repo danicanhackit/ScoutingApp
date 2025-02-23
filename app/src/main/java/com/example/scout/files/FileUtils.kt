@@ -1,5 +1,8 @@
 package com.example.scout.files
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.FileProvider
 import com.example.scout.database.ScoutingReport
 import java.io.File
 import java.io.FileWriter
@@ -24,8 +27,20 @@ object FileUtils {
             }
             writer.flush()
             writer.close()
+
+            FileProvider.getUriForFile(context, "com.example.scout.files", file)
+
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    fun shareCSV(context: Context, fileUri: Uri) {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/csv"
+            putExtra(Intent.EXTRA_STREAM, fileUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Required for sharing
+        }
+        context.startActivity(Intent.createChooser(shareIntent, "Share CSV via"))
     }
 }

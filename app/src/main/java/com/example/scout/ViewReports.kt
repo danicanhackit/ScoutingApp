@@ -13,27 +13,63 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import androidx.navigation.NavHostController
 import java.io.File
 
+// need to add top bar with 9181 platy
+// center text at top
+// add a back button
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewReports() {
+fun ViewReports(navController: NavHostController) {
     val context = LocalContext.current
     val scoutingReportsDir = File(context.getExternalFilesDir(null), "ScoutingReports")
 
     // Get the list of CSV files
     val csvFiles = remember { scoutingReportsDir.listFiles()?.filter { it.extension == "csv" } ?: emptyList() }
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Scouting Reports", style = MaterialTheme.typography.headlineMedium)
+    Column (
+        modifier = Modifier.fillMaxSize()
+    ) {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = "9181 PlatyPirates",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (csvFiles.isEmpty()) {
-            Text(text = "No CSV files found.", style = MaterialTheme.typography.bodyLarge)
-        } else {
-            LazyColumn {
-                items(csvFiles) { file ->
-                    FileItem(file, context)
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Scouting Reports",
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Button(
+                onClick = {
+                    navController.navigate("start")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Back")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            if (csvFiles.isEmpty()) {
+                Text(text = "No CSV files found.", style = MaterialTheme.typography.bodyLarge)
+            } else {
+                LazyColumn {
+                    items(csvFiles) { file ->
+                        FileItem(file, context)
+                    }
                 }
             }
         }
@@ -66,7 +102,7 @@ fun FileItem(file: File, context: Context) {
 }
 
 fun openFile(context: Context, file: File) {
-    val uri = Uri.fromFile(file)
+    val uri = FileProvider.getUriForFile(context, "com.example.scout.files", file)
     val intent = Intent(Intent.ACTION_VIEW).apply {
         setDataAndType(uri, "text/csv")
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -75,7 +111,7 @@ fun openFile(context: Context, file: File) {
 }
 
 fun shareFile(context: Context, file: File) {
-    val uri = Uri.fromFile(file)
+    val uri = FileProvider.getUriForFile(context, "com.example.scout.files", file)
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/csv"
         putExtra(Intent.EXTRA_STREAM, uri)
