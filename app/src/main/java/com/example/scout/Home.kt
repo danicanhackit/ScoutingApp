@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,12 +69,22 @@ fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
 
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
+            navController.navigate("start")
+        }, modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Back to Start Menu")
+        }
+
+        // haven't coded this screen but i'm not sure if i need to
+        /*
+        Spacer(modifier = Modifier.height(10.dp))
+        Button(onClick = {
             navController.navigate("displayData")
         },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Event Data")
-        }
+        }*/
     }
 }
 

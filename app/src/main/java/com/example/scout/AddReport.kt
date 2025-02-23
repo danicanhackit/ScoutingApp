@@ -18,9 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +47,12 @@ private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3
 fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController){
     var teamNum by remember { mutableStateOf(TextFieldValue(" "))}
     val keyboardController = LocalSoftwareKeyboardController.current
+    val reportSectionsToDelete by scoutingViewModel.reportsByTeamNum.observeAsState(emptyList())
+
+    LaunchedEffect(Unit) {
+        scoutingViewModel.getReportsById(scoutingViewModel.reportId)
+    }
+
     Column {
         CenterAlignedTopAppBar(
             title = {
@@ -88,6 +95,9 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
             Row {
                 Button(
                     onClick = {
+                        reportSectionsToDelete.forEach { reportSection ->
+                            scoutingViewModel.deleteScoutingReport(reportSection)
+                        }
                         navController.navigate("home")
                     },
                     modifier = Modifier.width(200.dp)
@@ -97,8 +107,10 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
-                        // add fields to database
-                        //teamViewModel.teamNumberBeingScouted = teamNum.text.toInt()
+                        val userInput = teamNum.text.trim()
+                        teamViewModel.teamNumberBeingScouted = userInput.toIntOrNull() ?: 0
+                        // this is going to cause problems if someone wants to change
+                        // team being scouted but go back to the same report
                         scoutingViewModel.reportId = scoutingViewModel.generateReportId()
                         navController.navigate("autonomous")
                     },

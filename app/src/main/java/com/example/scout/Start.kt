@@ -49,7 +49,7 @@ fun StartScreen(teamViewModel: TeamViewModel, navController: NavHostController) 
             }
             Spacer(modifier = Modifier.height(20.dp))
             Button(onClick = {
-                navController.navigate("home")
+                navController.navigate("eventSelection")
             },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -57,14 +57,14 @@ fun StartScreen(teamViewModel: TeamViewModel, navController: NavHostController) 
             }
 
             // haven't coded this screen yet but not sure if I need to
-            Spacer(modifier = Modifier.height(10.dp))
+            /*Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
                 navController.navigate("displayData")
             },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Past Data")
-            }
+            }*/
 
             Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
@@ -73,6 +73,15 @@ fun StartScreen(teamViewModel: TeamViewModel, navController: NavHostController) 
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Edit Data Fields")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(onClick = {
+                navController.navigate("viewReports")
+            },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "View Past Reports")
             }
         }
     }

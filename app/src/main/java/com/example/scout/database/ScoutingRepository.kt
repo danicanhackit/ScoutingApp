@@ -2,10 +2,15 @@ package com.example.scout.database
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
 import com.example.scout.files.FileUtils
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, private val scoutingReportDao: ScoutingReportDao) {
+    val allInputFieldNames: LiveData<List<String>> = scoutingFieldDao.getAllInputFieldNames()
 
+    // INPUT FIELDS
     // Suspend keyword ensures functions run asynchronously to main thread
     suspend fun getFieldsForSection(section: String): List<ScoutingInputFields> {
         // Calls function on scoutingFieldDao
@@ -17,22 +22,40 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
     suspend fun deleteFieldFromScoutingInputFields(field: ScoutingInputFields) {
         scoutingFieldDao.deleteField(field)
     }
+    suspend fun getFieldByFieldName(fieldName: String): ScoutingInputFields{
+        return scoutingFieldDao.getFieldByFieldName(fieldName)
+    }
 
+    // SCOUTING REPORTS
     suspend fun addScoutingReport(field: ScoutingReport){
         scoutingReportDao.addScoutingReport(field)
     }
     suspend fun deleteScoutingReport(field: ScoutingReport){
         scoutingReportDao.deleteScoutingReport(field)
     }
+    suspend fun getReportsByIdAndSection(id: String, section: String): List<ScoutingReport>{
+        return scoutingReportDao.getReportsByIdAndSection(id, section)
+    }
+    suspend fun getReportsByIdAndTeamNum(id: String, teamNum: Int?): List<ScoutingReport>{
+        return scoutingReportDao.getReportsByIdAndTeamNum(id, teamNum)
+    }
+    suspend fun getReportsById(id: String): List<ScoutingReport>{
+        return scoutingReportDao.getReportsById(id)
+    }
 
-    suspend fun exportReportById(context: Context, reportId: String) {
+    suspend fun exportReportById(context: Context, reportId: String, teamNum: String) {
         val reports = scoutingReportDao.getReportsById(reportId) // Fetch reports from the database
+        val sdf = SimpleDateFormat("'Date:'dd-MM-yyyy ' _ Time:'HH:mm:ss z")
+        val currentDateAndTime = sdf.format(Date())
+
         if (reports.isNotEmpty()) {
-            FileUtils.exportDatabaseToCSV(context, "scouting_report_$reportId.csv", reports)
+            FileUtils.exportDatabaseToCSV(context, "Scouting Report_Team "+
+                    teamNum+"_"+currentDateAndTime+".csv", reports)
         }
     }
 
 
+    // DEFAULT DATABASE
     // Preload database with default fields if necessary
     suspend fun preloadDatabase() {
             val sections = listOf("Autonomous", "Teleop", "Endgame")

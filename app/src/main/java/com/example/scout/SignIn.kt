@@ -16,8 +16,8 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,7 +56,6 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
     var year by remember{ mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    //val teamViewModel: TeamViewModel = viewModel()
 
     Column(modifier = Modifier.fillMaxSize()) {
         CenterAlignedTopAppBar(
@@ -75,7 +73,7 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
             Text(text = "Welcome!", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            /*OutlinedTextField(
                 value = teamNumber,
                 onValueChange = { teamNumber = it },
                 label = { Text("Team Number:", color = Burgundy) },
@@ -85,15 +83,15 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
                 keyboardActions = KeyboardActions(
                     onDone = { keyboardController?.hide()}
                 ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = Burgundy,
                     focusedBorderColor = PlatyRed,
                     unfocusedBorderColor = Burgundy,
-                    cursorColor = Burgundy
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
-
+            */
             OutlinedTextField(
                 value = scouterName,
                 onValueChange = { scouterName = it },
@@ -103,16 +101,16 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
                 keyboardActions = KeyboardActions(
                     onDone = { keyboardController?.hide()}
                 ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = Burgundy,
                     focusedBorderColor = PlatyRed,
                     unfocusedBorderColor = Burgundy,
-                    cursorColor = Burgundy
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            /*OutlinedTextField(
                 value = year,
                 onValueChange = { year = it },
                 label = { Text("Year:", color = Burgundy) },
@@ -121,10 +119,10 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
                 keyboardActions = KeyboardActions(
                     onDone = { keyboardController?.hide()}
                 ),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = Burgundy,
                     focusedBorderColor = PlatyRed,
                     unfocusedBorderColor = Burgundy,
-                    cursorColor = Burgundy
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -159,7 +157,20 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
                 }
             }) {
                 Text(text = "Submit")
+            }*/
+
+            Button(onClick = {
+                Toast.makeText(
+                    context,
+                    "Welcome "+scouterName.text+"!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                teamViewModel.scouterName = scouterName.text
+                navController.navigate("start")
+            }) {
+                Text(text = "Submit")
             }
+
 
         }
     }
