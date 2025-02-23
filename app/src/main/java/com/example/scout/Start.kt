@@ -49,11 +49,11 @@ fun StartScreen(teamViewModel: TeamViewModel, navController: NavHostController) 
             }
             Spacer(modifier = Modifier.height(20.dp))
             Button(onClick = {
-                navController.navigate("eventSelection")
+                navController.navigate("addReport")
             },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Select Event")
+                Text(text = "Add New Scouting Report")
             }
 
             // haven't coded this screen yet but not sure if I need to

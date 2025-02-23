@@ -45,11 +45,11 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
 
     suspend fun exportReportById(context: Context, reportId: String, teamNum: String) {
         val reports = scoutingReportDao.getReportsById(reportId) // Fetch reports from the database
-        val sdf = SimpleDateFormat("'Date:'dd-MM-yyyy ' _ Time:'HH:mm:ss z")
+        val sdf = SimpleDateFormat("'Date:'dd-MM-yyyy'_Time:'HH:mm:ss z")
         val currentDateAndTime = sdf.format(Date())
 
         if (reports.isNotEmpty()) {
-            FileUtils.exportDatabaseToCSV(context, "Scouting Report_Team "+
+            FileUtils.exportDatabaseToCSV(context, "Team "+
                     teamNum+"_"+currentDateAndTime+".csv", reports)
         }
     }

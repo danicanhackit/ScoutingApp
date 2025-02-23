@@ -35,12 +35,4 @@ object FileUtils {
         }
     }
 
-    fun shareCSV(context: Context, fileUri: Uri) {
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/csv"
-            putExtra(Intent.EXTRA_STREAM, fileUri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Required for sharing
-        }
-        context.startActivity(Intent.createChooser(shareIntent, "Share CSV via"))
-    }
 }

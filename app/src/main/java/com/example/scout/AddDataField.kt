@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -21,8 +23,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -39,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.scout.database.ScoutingInputFields
 import com.example.scout.ui.theme.Burgundy
+import com.example.scout.ui.theme.Cream
 import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.TeamViewModel
@@ -61,6 +67,8 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
     val sectionToAddFieldTo = teamViewModel.dataFieldSection
     var fieldInputTypeToAdd by remember { mutableStateOf("") }
     var fieldName by remember { mutableStateOf(TextFieldValue("")) }
+
+    var showDialog = remember { mutableStateOf(false)}
 
     CenterAlignedTopAppBar(
         title = { Text(text = "9181 PlatyPirates", style = MaterialTheme.typography.headlineSmall) }
@@ -187,6 +195,19 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
             Spacer(modifier = Modifier.height(50.dp))
         }
 
+        if(showDialog.value){
+            if (sectionToAddFieldTo != null) {
+                DrawConfirmAddFieldNotification(
+                    sectionToAddFieldTo,
+                    scoutingViewModel,
+                    fieldName,
+                    fieldInputTypeToAdd,
+                    addDropdownOptions,
+                    showDialog,
+                    navController)
+            }
+        }
+
         Row{
             Button(onClick = {
                 navController.navigate("addDataFieldMenu")
@@ -199,9 +220,10 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
             Spacer(modifier = Modifier.width(30.dp))
 
             Button(onClick = {
-                navController.navigate("addDataFieldMenu")
+                showDialog.value = true
+                //navController.navigate("addDataFieldMenu")
 
-                if(sectionToAddFieldTo != null) {
+               /* if(sectionToAddFieldTo != null) {
                     addDataFieldToDatabase(
                         scoutingViewModel,
                         sectionToAddFieldTo,
@@ -209,7 +231,7 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
                         fieldInputTypeToAdd,
                         addDropdownOptions
                     )
-                }
+                }*/
             },
                 modifier = Modifier.width(150.dp)
             ) {
@@ -217,6 +239,57 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
             }
         }
     }
+}
+
+@Composable
+fun DrawConfirmAddFieldNotification(
+    sectionToAddFieldTo: String,
+    scoutingViewModel: ScoutingViewModel,
+    fieldName: TextFieldValue,
+    fieldInputTypeToAdd: String,
+    addDropdownOptions: List<String>,
+    showDialog: MutableState<Boolean>,
+    navController: NavHostController
+){
+    AlertDialog(
+        onDismissRequest = {
+            showDialog.value = false
+        },
+        title = { Text(text = "Confirm New Data Field")},
+        text = { Text(text = "Please press confirm to add this input data field. This field can be deleted later if desired.", color = Color.White)},
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    addDataFieldToDatabase(
+                        scoutingViewModel,
+                        sectionToAddFieldTo,
+                        fieldName.text,
+                        fieldInputTypeToAdd,
+                        addDropdownOptions
+                    )
+                    navController.navigate("addDataFieldMenu")
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Cream
+                )
+            ) {
+                Text("Confirm")
+            }
+
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    showDialog.value = false
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Cream
+                )
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 fun addDataFieldToDatabase(

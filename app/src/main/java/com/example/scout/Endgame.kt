@@ -127,8 +127,7 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                             scoutingViewModel.deleteScoutingReport(reportSection)
                         }
                         navController.navigate("teleop")
-                    },
-                    modifier = Modifier.width(100.dp)
+                    }
                 ) {
                     Text(text = "Back")
                 }
@@ -147,8 +146,7 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                             )
                         }
                         showDialog.value = true
-                    },
-                    modifier = Modifier.width(150.dp)
+                    }
                 ) {
                     Text(text = "Confirm")
                 }
