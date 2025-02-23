@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.scout.database.ScoutingInputFields
@@ -50,6 +52,10 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
     val isDropDownExpanded = remember { mutableStateOf(false) }
     val fieldTypeOptions = listOf("Number", "Dropdown")
     val itemPosition = remember { mutableStateOf(0)}
+
+    // adding dropdown options
+    val addDropdownOptions = remember { mutableStateListOf<String>() }
+    var newOption by remember { mutableStateOf(TextFieldValue("")) }
 
     //database variables
     val sectionToAddFieldTo = teamViewModel.dataFieldSection
@@ -69,7 +75,10 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(text = "Add Data Field", style = MaterialTheme.typography.headlineLarge)
+        Text(text = "Add New "+teamViewModel.dataFieldSection+" Field",
+            style = MaterialTheme.typography.headlineLarge,
+            textAlign = TextAlign.Center)
+
         OutlinedTextField(
             value = fieldName,
             onValueChange = { fieldName = it },
@@ -117,38 +126,112 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
             }
             }
         Spacer(modifier = Modifier.height(50.dp))
-        Button(onClick = {
-            navController.navigate("addDataFieldMenu")
 
-            // need to add a cancel button
-
-            if(sectionToAddFieldTo != null) {
-                addDataFieldToDatabase(
-                    scoutingViewModel,
-                    sectionToAddFieldTo,
-                    fieldName.text,
-                    fieldInputTypeToAdd
+        if(fieldInputTypeToAdd == "Dropdown"){
+            Column (
+                modifier = Modifier
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text("Add Dropdown Options")
+                // Input field to add new dropdown options
+                OutlinedTextField(
+                    value = newOption,
+                    onValueChange = { newOption = it },
+                    label = { Text("New Option", color = Burgundy) },
+                    textStyle = TextStyle(color = Burgundy),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = { keyboardController?.hide() }
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = PlatyRed,
+                        unfocusedBorderColor = Burgundy,
+                        cursorColor = Burgundy
+                    ),
+                    modifier = Modifier.fillMaxWidth()
                 )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Button to add option
+                Button(onClick = {
+                    if (newOption.text.isNotBlank()) {
+                        addDropdownOptions.add(newOption.text)
+                        newOption = TextFieldValue("") // Clear input after adding
+                    }
+                }) {
+                    Text("Add Option")
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Display added options
+                Column {
+                    addDropdownOptions.forEachIndexed { index, option ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = option, modifier = Modifier.weight(1f))
+                            Button(onClick = { addDropdownOptions.removeAt(index) }) {
+                                Text("Remove")
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(5.dp))
+                    }
+                }
             }
-        },
-            modifier = Modifier.width(150.dp)
-        ) {
-            Text(text = "Confirm")
+
+            Spacer(modifier = Modifier.height(50.dp))
         }
+
+        Row{
+            Button(onClick = {
+                navController.navigate("addDataFieldMenu")
+            },
+                modifier = Modifier.width(150.dp)
+            ) {
+                Text(text = "Cancel")
+            }
+
+            Spacer(modifier = Modifier.width(30.dp))
+
+            Button(onClick = {
+                navController.navigate("addDataFieldMenu")
+
+                if(sectionToAddFieldTo != null) {
+                    addDataFieldToDatabase(
+                        scoutingViewModel,
+                        sectionToAddFieldTo,
+                        fieldName.text,
+                        fieldInputTypeToAdd,
+                        addDropdownOptions
+                    )
+                }
+            },
+                modifier = Modifier.width(150.dp)
+            ) {
+                Text(text = "Confirm")
+            }
         }
+    }
 }
 
 fun addDataFieldToDatabase(
     scoutingViewModel: ScoutingViewModel,
     section: String,
     fieldName: String,
-    fieldInputType: String
+    fieldInputType: String,
+    dropdownOptions: List<String>
     ) {
     scoutingViewModel.insertFieldToScoutingInputFields(
         ScoutingInputFields(
             section = section,
             fieldName = fieldName,
-            fieldInputType = fieldInputType)
+            fieldInputType = fieldInputType,
+            dropdownOptions = dropdownOptions.joinToString(","))
     )
 }
 

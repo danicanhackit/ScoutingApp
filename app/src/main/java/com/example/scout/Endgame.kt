@@ -81,29 +81,38 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
             Spacer(modifier = Modifier.height(20.dp))
 
             fieldsForEndgame.forEach { field ->
-                val textState = remember {mutableStateOf("")}
-                OutlinedTextField(
-                    value = textState.value,
-                    onValueChange = { newValue ->
-                        textState.value = newValue
-                        fieldValues.value = fieldValues.value.toMutableMap().apply{
-                            put(field.fieldName, newValue)
+                if(field.fieldInputType == "Number"){
+                    val textState = remember {mutableStateOf("")}
+                    OutlinedTextField(
+                        value = textState.value,
+                        onValueChange = { newValue ->
+                            textState.value = newValue
+                            fieldValues.value = fieldValues.value.toMutableMap().apply{
+                                put(field.fieldName, newValue)
+                            }
+                        },// Handle value changes
+                        label = { Text(field.fieldName) },
+                        textStyle = TextStyle(color = Burgundy),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = { keyboardController?.hide()}
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            cursorColor = Burgundy,
+                            focusedBorderColor = PlatyRed,
+                            unfocusedBorderColor = Burgundy,
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                } else if(field.fieldInputType == "Dropdown"){
+                    val selectedValue = fieldValues.value[field.fieldName] // Can be null
+                    DrawDropdownOptions(field, selectedValue) { selectedOption ->
+                        fieldValues.value = fieldValues.value.toMutableMap().apply {
+                            put(field.fieldName, selectedOption)
                         }
-                    },// Handle value changes
-                    label = { Text(field.fieldName) },
-                    textStyle = TextStyle(color = Burgundy),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = { keyboardController?.hide()}
-                    ),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        cursorColor = Burgundy,
-                        focusedBorderColor = PlatyRed,
-                        unfocusedBorderColor = Burgundy,
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+                    }
+                }
             }
 
             if(showDialog.value){

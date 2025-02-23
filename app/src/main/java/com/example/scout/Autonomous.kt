@@ -1,6 +1,9 @@
 package com.example.scout
 
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +16,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.scout.database.ScoutingInputFields
 import com.example.scout.ui.theme.Burgundy
 import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.viewmodels.ScoutingViewModel
@@ -85,29 +91,40 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
 
             // Iterate over the fields for the autonomous section and create number input fields
             fieldsForAutonomous.forEach { field ->
-                val textState = remember { mutableStateOf("") }
-                OutlinedTextField(
-                    value = textState.value,
-                    onValueChange = { newValue ->
-                        textState.value = newValue
-                        fieldValues.value = fieldValues.value.toMutableMap().apply{
-                            put(field.fieldName, newValue)
+                if(field.fieldInputType == "Number"){
+                    val textState = remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = textState.value,
+                        onValueChange = { newValue ->
+                            textState.value = newValue
+                            fieldValues.value = fieldValues.value.toMutableMap().apply{
+                                put(field.fieldName, newValue)
+                            }
+                        },
+                        label = { Text(field.fieldName) },
+                        textStyle = TextStyle(color = Burgundy),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = { keyboardController?.hide()}
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            cursorColor = Burgundy,
+                            focusedBorderColor = PlatyRed,
+                            unfocusedBorderColor = Burgundy,
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                } else if(field.fieldInputType == "Dropdown"){
+                    val selectedValue = fieldValues.value[field.fieldName] // Can be null
+                    DrawDropdownOptions(field, selectedValue) { selectedOption ->
+                        fieldValues.value = fieldValues.value.toMutableMap().apply {
+                            put(field.fieldName, selectedOption)
                         }
-                    },
-                    label = { Text(field.fieldName) },
-                    textStyle = TextStyle(color = Burgundy),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = { keyboardController?.hide()}
-                    ),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        cursorColor = Burgundy,
-                        focusedBorderColor = PlatyRed,
-                        unfocusedBorderColor = Burgundy,
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+                    }
+                    //Text(text = "hello")
+                }
+
             }
 
 
@@ -147,6 +164,57 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
         }
     }
 }
+
+@Composable
+fun DrawDropdownOptions(
+    field: ScoutingInputFields,
+    selectedValue: String?,
+    onValueSelected: (String) -> Unit
+) {
+    val isDropDownExpanded = remember { mutableStateOf(false) }
+    val selectedOption = remember { mutableStateOf(selectedValue ?: "Select an Option") }
+
+    // Convert comma-separated string into a list
+    val options: List<String> = field.dropdownOptions?.split(",")?.map { it.trim() } ?: emptyList()
+
+    Row{
+        Text(text = field.fieldName+": ")
+        Spacer(modifier = Modifier.width(25.dp))
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isDropDownExpanded.value = true }
+                    .padding(8.dp)
+            ) {
+                Text(text = selectedOption.value)
+            }
+
+            DropdownMenu(
+                expanded = isDropDownExpanded.value,
+                onDismissRequest = { isDropDownExpanded.value = false }
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            selectedOption.value = option
+                            isDropDownExpanded.value = false
+                            onValueSelected(option) // Update fieldValues
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
 
 
 /*@Preview(showBackground = true)

@@ -74,6 +74,15 @@ fun StartScreen(teamViewModel: TeamViewModel, navController: NavHostController) 
             ) {
                 Text(text = "Edit Data Fields")
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(onClick = {
+                navController.navigate("viewReports")
+            },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "View Past Reports")
+            }
         }
     }
 }

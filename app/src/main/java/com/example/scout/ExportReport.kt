@@ -38,6 +38,8 @@ import com.example.scout.ui.theme.Burgundy
 import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.TeamViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,8 +70,10 @@ fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
             Row {
                 Button(
                     onClick = {
-                        // export file
-                        scoutingViewModel.exportReportById(context, scoutingViewModel.reportId)
+                        //export file
+                        scoutingViewModel.exportReportById(context, scoutingViewModel.reportId,
+                            teamViewModel.teamNumberBeingScouted.toString()
+                        )
                         Toast.makeText(context, "CSV Exported!", Toast.LENGTH_LONG).show()
                     },
                     modifier = Modifier.width(200.dp)

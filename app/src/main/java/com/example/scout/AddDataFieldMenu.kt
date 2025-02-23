@@ -40,6 +40,8 @@ fun AddDataFieldMenu(teamViewModel: TeamViewModel, navController: NavHostControl
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text("Add New Data Field", style = MaterialTheme.typography.headlineLarge)
+        Spacer(modifier = Modifier.height(10.dp))
 
         Button(onClick = {
             teamViewModel.dataFieldSection = "Autonomous"

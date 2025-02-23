@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.scout.files.FileUtils
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, private val scoutingReportDao: ScoutingReportDao) {
     val allInputFieldNames: LiveData<List<String>> = scoutingFieldDao.getAllInputFieldNames()
@@ -41,10 +43,14 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
         return scoutingReportDao.getReportsById(id)
     }
 
-    suspend fun exportReportById(context: Context, reportId: String) {
+    suspend fun exportReportById(context: Context, reportId: String, teamNum: String) {
         val reports = scoutingReportDao.getReportsById(reportId) // Fetch reports from the database
+        val sdf = SimpleDateFormat("'Date:'dd-MM-yyyy ' _ Time:'HH:mm:ss z")
+        val currentDateAndTime = sdf.format(Date())
+
         if (reports.isNotEmpty()) {
-            FileUtils.exportDatabaseToCSV(context, "scouting_report_$reportId.csv", reports)
+            FileUtils.exportDatabaseToCSV(context, "Scouting Report_Team "+
+                    teamNum+"_"+currentDateAndTime+".csv", reports)
         }
     }
 

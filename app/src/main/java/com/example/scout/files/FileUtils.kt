@@ -8,7 +8,11 @@ import java.io.IOException
 object FileUtils {
 
     fun exportDatabaseToCSV(context: Context, filename: String, data: List<ScoutingReport>) {
-        val file = File(context.getExternalFilesDir(null), filename)
+        val scoutingDir = File(context.getExternalFilesDir(null), "ScoutingReports")
+        if (!scoutingDir.exists()) {
+            scoutingDir.mkdirs()
+        }
+        val file = File(scoutingDir, filename)
 
         try {
             val writer = FileWriter(file)

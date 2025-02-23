@@ -127,9 +127,9 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
         }
     }
 
-    fun exportReportById(context: Context, reportId: String){
+    fun exportReportById(context: Context, reportId: String, teamNum: String){
         viewModelScope.launch {
-            repository.exportReportById(context, reportId)
+            repository.exportReportById(context, reportId, teamNum)
         }
     }
 
