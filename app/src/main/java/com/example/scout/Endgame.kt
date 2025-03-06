@@ -1,5 +1,6 @@
 package com.example.scout
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,9 +52,11 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
     val fieldsForEndgame by scoutingViewModel.fieldsForEndgame.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
     val showDialog = remember { mutableStateOf(false)}
+    val reportSectionsToDelete by scoutingViewModel.reportsBySection.observeAsState(emptyList())
 
     LaunchedEffect(Unit) {
         scoutingViewModel.loadFieldsForEndgame()
+        scoutingViewModel.getReportFieldsBySection(scoutingViewModel.reportId, "Teleop")
     }
     Column {
         CenterAlignedTopAppBar(
@@ -78,29 +81,38 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
             Spacer(modifier = Modifier.height(20.dp))
 
             fieldsForEndgame.forEach { field ->
-                val textState = remember {mutableStateOf("")}
-                OutlinedTextField(
-                    value = textState.value,
-                    onValueChange = { newValue ->
-                        textState.value = newValue
-                        fieldValues.value = fieldValues.value.toMutableMap().apply{
-                            put(field.fieldName, newValue)
+                if(field.fieldInputType == "Number"){
+                    val textState = remember {mutableStateOf("")}
+                    OutlinedTextField(
+                        value = textState.value,
+                        onValueChange = { newValue ->
+                            textState.value = newValue
+                            fieldValues.value = fieldValues.value.toMutableMap().apply{
+                                put(field.fieldName, newValue)
+                            }
+                        },// Handle value changes
+                        label = { Text(field.fieldName) },
+                        textStyle = TextStyle(color = Burgundy),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = { keyboardController?.hide()}
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            cursorColor = Burgundy,
+                            focusedBorderColor = PlatyRed,
+                            unfocusedBorderColor = Burgundy,
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                } else if(field.fieldInputType == "Dropdown"){
+                    val selectedValue = fieldValues.value[field.fieldName] // Can be null
+                    DrawDropdownOptions(field, selectedValue) { selectedOption ->
+                        fieldValues.value = fieldValues.value.toMutableMap().apply {
+                            put(field.fieldName, selectedOption)
                         }
-                    },// Handle value changes
-                    label = { Text(field.fieldName) },
-                    textStyle = TextStyle(color = Burgundy),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = { keyboardController?.hide()}
-                    ),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        cursorColor = Burgundy,
-                        focusedBorderColor = PlatyRed,
-                        unfocusedBorderColor = Burgundy,
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+                    }
+                }
             }
 
             if(showDialog.value){
@@ -111,9 +123,11 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
             Row {
                 Button(
                     onClick = {
+                        reportSectionsToDelete.forEach { reportSection ->
+                            scoutingViewModel.deleteScoutingReport(reportSection)
+                        }
                         navController.navigate("teleop")
-                    },
-                    modifier = Modifier.width(100.dp)
+                    }
                 ) {
                     Text(text = "Back")
                 }
@@ -132,9 +146,7 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                             )
                         }
                         showDialog.value = true
-                        //navController.navigate("exportReport")
-                    },
-                    modifier = Modifier.width(150.dp)
+                    }
                 ) {
                     Text(text = "Confirm")
                 }

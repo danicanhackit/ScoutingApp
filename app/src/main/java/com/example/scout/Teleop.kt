@@ -45,8 +45,11 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
     val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
     val fieldsForTeleop by scoutingViewModel.fieldsForTeleop.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
+    val reportSectionsToDelete by scoutingViewModel.reportsBySection.observeAsState(emptyList())
+
     LaunchedEffect(Unit) {
         scoutingViewModel.loadFieldsForTeleop()
+        scoutingViewModel.getReportFieldsBySection(scoutingViewModel.reportId, "Autonomous")
     }
     Column {
         CenterAlignedTopAppBar(
@@ -67,7 +70,6 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // update for actual event name
             Text(text = "Teleop Period", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -80,36 +82,49 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
                     .verticalScroll(rememberScrollState())
             ){
                 fieldsForTeleop.forEach { field ->
-                    val textState = remember {mutableStateOf("")}
-                    OutlinedTextField(
-                        value = textState.value,
-                        onValueChange = { newValue ->
-                            textState.value = newValue
-                            fieldValues.value = fieldValues.value.toMutableMap().apply{
-                                put(field.fieldName, newValue)
+                    if(field.fieldInputType == "Number"){
+                        val textState = remember {mutableStateOf("")}
+                        OutlinedTextField(
+                            value = textState.value,
+                            onValueChange = { newValue ->
+                                textState.value = newValue
+                                fieldValues.value = fieldValues.value.toMutableMap().apply{
+                                    put(field.fieldName, newValue)
+                                }
+                            },// Handle value changes
+                            label = { Text(field.fieldName) },
+                            textStyle = TextStyle(color = Burgundy),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(
+                                onDone = { keyboardController?.hide()}
+                            ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                cursorColor = Burgundy,
+                                focusedBorderColor = PlatyRed,
+                                unfocusedBorderColor = Burgundy,
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    } else if(field.fieldInputType == "Dropdown"){
+                        val selectedValue = fieldValues.value[field.fieldName] // Can be null
+                        DrawDropdownOptions(field, selectedValue) { selectedOption ->
+                            fieldValues.value = fieldValues.value.toMutableMap().apply {
+                                put(field.fieldName, selectedOption)
                             }
-                        },// Handle value changes
-                        label = { Text(field.fieldName) },
-                        textStyle = TextStyle(color = Burgundy),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(
-                            onDone = { keyboardController?.hide()}
-                        ),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            cursorColor = Burgundy,
-                            focusedBorderColor = PlatyRed,
-                            unfocusedBorderColor = Burgundy,
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
+                        }
+                    }
                 }
+
             }
 
             Spacer(modifier = Modifier.height(20.dp))
             Row {
                 Button(
                     onClick = {
+                        reportSectionsToDelete.forEach { reportSection ->
+                            scoutingViewModel.deleteScoutingReport(reportSection)
+                        }
                         navController.navigate("autonomous")
                     },
                     modifier = Modifier.width(100.dp)

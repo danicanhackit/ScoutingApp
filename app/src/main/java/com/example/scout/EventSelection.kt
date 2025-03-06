@@ -128,7 +128,7 @@ fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostControlle
         Spacer(modifier = Modifier.height(100.dp))
         Button(onClick = {
             navController.navigate("start")
-        }, modifier = Modifier.width(400.dp)
+        }, modifier = Modifier.width(300.dp)
         ) {
             Text(text = "Back to Start Menu")
         }

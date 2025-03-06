@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,13 +60,13 @@ fun EditDataFields(navController: NavHostController) {
             ) {
                 Text(text = "Add")
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(150.dp))
 
             Button(
                 onClick = {
-                    navController.navigate("home")
+                    navController.navigate("start")
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.width(120.dp)
             ) {
                 Text(text = "Exit")
             }

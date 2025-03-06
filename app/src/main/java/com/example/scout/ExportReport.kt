@@ -32,12 +32,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.scout.ui.theme.Burgundy
 import com.example.scout.ui.theme.PlatyRed
 import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.TeamViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,27 +66,22 @@ fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "Export Report to CSV File", style = MaterialTheme.typography.headlineLarge,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(10.dp))
             Row {
                 Button(
                     onClick = {
-                        // export file
-                        scoutingViewModel.exportReportById(context, scoutingViewModel.reportId)
+                        //export file
+                        scoutingViewModel.exportReportById(context, scoutingViewModel.reportId,
+                            teamViewModel.teamNumberBeingScouted.toString()
+                        )
                         Toast.makeText(context, "CSV Exported!", Toast.LENGTH_LONG).show()
-                    },
-                    modifier = Modifier.width(200.dp)
+                        navController.navigate("start")
+                    }
                 ) {
                     Text(text = "Export")
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = {
-                        navController.navigate("home")
-                    },
-                    modifier = Modifier.width(100.dp)
-                ) {
-                    Text(text = "Home")
                 }
             }
         }
