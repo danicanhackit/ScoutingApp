@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -200,7 +201,7 @@ fun shareFile(context: Context, file: File) {
 }
 
 fun exportToUsb(context: Context, csvFiles: List<File>) {
-    val usbPath = detectUsbPath() // Detect USB mount point
+    val usbPath = detectUsbPath()
     if (usbPath == null) {
         Toast.makeText(context, "No USB drive detected", Toast.LENGTH_LONG).show()
         return
@@ -208,7 +209,7 @@ fun exportToUsb(context: Context, csvFiles: List<File>) {
 
     val usbDir = File(usbPath, "ScoutingReports")
     if (!usbDir.exists()) {
-        usbDir.mkdirs() // Create the directory if it doesn't exist
+        usbDir.mkdirs()
     }
 
     var successCount = 0
@@ -226,10 +227,42 @@ fun exportToUsb(context: Context, csvFiles: List<File>) {
     Toast.makeText(context, "Exported $successCount files to USB", Toast.LENGTH_LONG).show()
 }
 
-fun detectUsbPath(): String? {
+/*fun detectUsbPath(): String? {
     val possiblePaths = File("/storage").listFiles()?.map { it.absolutePath }
     return possiblePaths?.find { it.contains("usb") || it.matches(Regex("/storage/[0-9A-F]{4}-[0-9A-F]{4}")) }
 }
+
+fun detectUsbPath(context: Context): String? {
+    val externalDirs = context.getExternalFilesDirs(null)
+    for (dir in externalDirs) {
+        if (dir != null && !dir.absolutePath.contains("emulated")) {
+            return dir.absolutePath.substringBefore("/Android") // Get the root USB path
+        }
+    }
+    return null
+}*/
+
+fun detectUsbPath(): String? {
+    val storageDir = File("/storage")
+    val possiblePaths = storageDir.listFiles()?.map { it.absolutePath }
+
+    if (possiblePaths != null) {
+        for (path in possiblePaths) {
+            Log.d("USB_DEBUG", "Checking path: $path")
+            if (path.matches(Regex("/storage/[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}"))) {
+                Log.d("USB_DEBUG", "Detected USB storage path: $path")
+                return path
+            }
+        }
+    }
+
+    Log.d("USB_DEBUG", "No USB drive detected")
+    return null
+}
+
+
+
+
 
 
 
