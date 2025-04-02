@@ -49,8 +49,9 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
         val currentDateAndTime = sdf.format(Date())
 
         if (reports.isNotEmpty()) {
-            FileUtils.exportDatabaseToCSV(context, "Team "+
-                    teamNum+"_"+currentDateAndTime+".csv", reports)
+           // FileUtils.exportDatabaseToCSV(context, "Team "+
+                   // teamNum+"_"+currentDateAndTime+".csv", reports)
+            FileUtils.exportDatabaseToCSV(context, "Team $teamNum.csv", reports)
         }
     }
 

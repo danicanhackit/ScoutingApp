@@ -3,6 +3,7 @@ package com.example.scout
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -23,8 +24,12 @@ import com.example.scout.ui.theme.ScoutTheme
 import com.example.scout.viewmodels.ScoutingViewModel
 import com.example.scout.viewmodels.ScoutingViewModelFactory
 import com.example.scout.viewmodels.TeamViewModel
+import android.os.Build
+import android.content.Intent
+import android.os.Environment
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,13 +56,19 @@ class MainActivity : ComponentActivity() {
         return ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED &&
+                (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) // For Android 11+
     }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val granted = permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
-            if (granted) {
+            val writeGranted = permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
+            if (granted && writeGranted) {
                 Toast.makeText(this, "Storage Permission Granted!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Permission Denied! USB Export may not work.", Toast.LENGTH_LONG).show()
@@ -68,9 +79,14 @@ class MainActivity : ComponentActivity() {
         if (!hasStoragePermission()) {
             requestPermissionLauncher.launch(
                 arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
             )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+            // For Android 11+ (API 30+), check and request MANAGE_EXTERNAL_STORAGE permission
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            startActivityForResult(intent, 1)
         }
     }
 }
