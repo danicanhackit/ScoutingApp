@@ -1,10 +1,17 @@
 package com.example.scout
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.NavHostController
 import androidx.navigation.testing.TestNavHostController
 import com.example.scout.ui.theme.Cream
@@ -26,20 +34,22 @@ import com.example.scout.ui.theme.ScoutTheme
 import com.example.scout.viewmodels.TeamViewModel
 import java.io.File
 
-// need to add top bar with 9181 platy
-// center text at top
-// add a back button
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewReports(navController: NavHostController) {
     val context = LocalContext.current
     val scoutingReportsDir = File(context.getExternalFilesDir(null), "ScoutingReports")
-
-    // Get the list of CSV files
     val csvFiles = remember { mutableStateListOf(*scoutingReportsDir.listFiles()?.filter { it.extension == "csv" }?.toTypedArray() ?: emptyArray()) }
 
-    //val csvFiles = remember { scoutingReportsDir.listFiles()?.filter { it.extension == "csv" } ?: emptyList() }
-    Column (
+    // Create an ActivityResultLauncher to handle the result of directory selection
+    val openDirectoryForResult = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri: Uri? ->
+        uri?.let {
+            // If the user selected a valid directory, call exportToUsb
+            exportToUsb(context, csvFiles, uri)
+        }
+    }
+
+    Column(
         modifier = Modifier.fillMaxSize()
     ) {
         CenterAlignedTopAppBar(
@@ -72,7 +82,10 @@ fun ViewReports(navController: NavHostController) {
                     Text(text = "Back")
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = { exportToUsb(context, csvFiles) }) {
+                Button(onClick = {
+                    // Trigger the directory picker when button is clicked
+                    openDirectoryForResult.launch(null)
+                }) {
                     Text(text = "Export All to USB")
                 }
             }
@@ -95,7 +108,7 @@ fun ViewReports(navController: NavHostController) {
 
 @Composable
 fun FileItem(file: File, context: Context, onDelete: (File) -> Unit) {
-    val showDialog = remember { mutableStateOf(false)}
+    val showDialog = remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -104,7 +117,7 @@ fun FileItem(file: File, context: Context, onDelete: (File) -> Unit) {
             .clickable { openFile(context, file) },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        if(showDialog.value){
+        if (showDialog.value) {
             DrawConfirmDeleteReportNotification(file, showDialog, onDelete)
         }
 
@@ -118,9 +131,9 @@ fun FileItem(file: File, context: Context, onDelete: (File) -> Unit) {
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Column (
+            Column(
                 modifier = Modifier.padding(5.dp)
-            ){
+            ) {
                 Button(onClick = { shareFile(context, file) }) {
                     Text(text = "Share")
                 }
@@ -138,24 +151,21 @@ fun DrawConfirmDeleteReportNotification(
     file: File,
     showDialog: MutableState<Boolean>,
     onDelete: (File) -> Unit
-){
+) {
     AlertDialog(
         onDismissRequest = {
             showDialog.value = false
         },
-        title = { Text(text = "Confirm Delete")},
-        text = { Text(text = "Please press confirm to delete this scouting report. This cannot be undone!", color = Color.White)},
+        title = { Text(text = "Confirm Delete") },
+        text = { Text(text = "Please press confirm to delete this scouting report. This cannot be undone!", color = Color.White) },
         confirmButton = {
             TextButton(
                 onClick = {
                     deleteFile(file)
                     onDelete(file)
-                    //Toast.makeText(LocalContext.current, "File Successfully Deleted!", Toast.LENGTH_LONG).show()
                     showDialog.value = false
                 },
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Cream
-                )
+                colors = ButtonDefaults.buttonColors(contentColor = Cream)
             ) {
                 Text("Confirm")
             }
@@ -166,9 +176,7 @@ fun DrawConfirmDeleteReportNotification(
                 onClick = {
                     showDialog.value = false
                 },
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Cream
-                )
+                colors = ButtonDefaults.buttonColors(contentColor = Cream)
             ) {
                 Text("Cancel")
             }
@@ -176,7 +184,7 @@ fun DrawConfirmDeleteReportNotification(
     )
 }
 
-fun deleteFile(file: File){
+fun deleteFile(file: File) {
     file.delete()
 }
 
@@ -199,44 +207,57 @@ fun shareFile(context: Context, file: File) {
     context.startActivity(Intent.createChooser(intent, "Share CSV File"))
 }
 
-fun exportToUsb(context: Context, csvFiles: List<File>) {
-    val usbPath = detectUsbPath() // Detect USB mount point
-    if (usbPath == null) {
-        Toast.makeText(context, "No USB drive detected", Toast.LENGTH_LONG).show()
-        return
-    }
+fun exportToUsb(context: Context, csvFiles: MutableList<File>, uri: Uri) {
+    val contentResolver = context.contentResolver
 
-    val usbDir = File(usbPath, "ScoutingReports")
-    if (!usbDir.exists()) {
-        usbDir.mkdirs() // Create the directory if it doesn't exist
-    }
+    // Get a DocumentFile for the URI, representing the root directory of the selected storage location
+    val documentFile = DocumentFile.fromTreeUri(context, uri)
 
-    var successCount = 0
+    if (documentFile != null && documentFile.canWrite()) {
+        var successCount = 0
 
-    for (file in csvFiles) {
-        val destFile = File(usbDir, file.name)
-        try {
-            file.copyTo(destFile, overwrite = true)
-            successCount++
-        } catch (e: Exception) {
-            e.printStackTrace()
+        // Loop through the CSV files and copy them to the USB storage
+        for (file in csvFiles) {
+            // Check if the file already exists in the destination directory on USB
+            val existingFile = documentFile.findFile(file.name)
+
+            // If the file exists, overwrite it, otherwise create a new file
+            val destFile = if (existingFile != null) {
+                // If file exists, return the existing file (overwrite behavior)
+                existingFile
+            } else {
+                // If the file doesn't exist, create it
+                documentFile.createFile("text/csv", file.name)
+            }
+
+            // If the file creation or retrieval was successful, write the content
+            if (destFile != null) {
+                try {
+                    val outputStream = contentResolver.openOutputStream(destFile.uri)
+                    val inputStream = file.inputStream()
+                    inputStream.copyTo(outputStream!!)
+                    outputStream.close()
+                    successCount++
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        context,
+                        "Failed to copy ${file.name}: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    e.printStackTrace()
+                }
+            }
         }
+        Toast.makeText(context, "Exported $successCount files to USB", Toast.LENGTH_LONG).show()
     }
-
-    Toast.makeText(context, "Exported $successCount files to USB", Toast.LENGTH_LONG).show()
-}
-
-fun detectUsbPath(): String? {
-    val possiblePaths = File("/storage").listFiles()?.map { it.absolutePath }
-    return possiblePaths?.find { it.contains("usb") || it.matches(Regex("/storage/[0-9A-F]{4}-[0-9A-F]{4}")) }
 }
 
 
 
 @Preview(showBackground = true)
 @Composable
-fun ViewReportsPreview(){
-    ScoutTheme{
+fun ViewReportsPreview() {
+    ScoutTheme {
         val navController = TestNavHostController(LocalContext.current)
         ViewReports(navController)
     }
