@@ -82,14 +82,3 @@ fun RemoveDataFieldMenu(scoutingViewModel: ScoutingViewModel, navController: Nav
         }
     }
 }
-
-
-/*@Preview(showBackground = true)
-@Composable
-fun RemoveDataFieldMenuPreview(){
-    ScoutTheme{
-        val navController = TestNavHostController(LocalContext.current)
-        RemoveDataFieldMenu(navController)
-    }
-}*/
-

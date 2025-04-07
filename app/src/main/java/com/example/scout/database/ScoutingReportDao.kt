@@ -24,7 +24,6 @@ interface ScoutingReportDao {
     @Query("SELECT * FROM ScoutingReport WHERE reportId = :reportId AND teamNumberBeingScouted = :teamNum")
     suspend fun getReportsByIdAndTeamNum(reportId: String, teamNum: Int?): List<ScoutingReport>
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addScoutingReport(field: ScoutingReport)
 

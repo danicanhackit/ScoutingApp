@@ -73,7 +73,6 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
             Text(text = "Teleop Period", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
-            // testing scrolling
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -91,7 +90,7 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
                                 fieldValues.value = fieldValues.value.toMutableMap().apply{
                                     put(field.fieldName, newValue)
                                 }
-                            },// Handle value changes
+                            },
                             label = { Text(field.fieldName) },
                             textStyle = TextStyle(color = Burgundy),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
@@ -107,7 +106,7 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                     } else if(field.fieldInputType == "Dropdown"){
-                        val selectedValue = fieldValues.value[field.fieldName] // Can be null
+                        val selectedValue = fieldValues.value[field.fieldName]
                         DrawDropdownOptions(field, selectedValue) { selectedOption ->
                             fieldValues.value = fieldValues.value.toMutableMap().apply {
                                 put(field.fieldName, selectedOption)
@@ -156,13 +155,5 @@ fun Teleop(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, n
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun TeleopPreview(){
-    ScoutTheme{
-        val navController = TestNavHostController(LocalContext.current)
-        Teleop(navController)
-    }
-}*/
 
 

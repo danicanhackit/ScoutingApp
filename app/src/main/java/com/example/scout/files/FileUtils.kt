@@ -19,9 +19,7 @@ object FileUtils {
 
         try {
             val writer = FileWriter(file)
-            // Write the header
             writer.append("ReportID,TeamNum,Section,FieldName,FieldValue\n")
-            // Write each entry
             for (entry in data) {
                 writer.append("${entry.reportId},${entry.teamNumberBeingScouted},${entry.gameplaySection},${entry.fieldName},${entry.enteredValue}\n")
             }

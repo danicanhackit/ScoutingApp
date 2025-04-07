@@ -46,7 +46,6 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController){
-    val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     Column {
         CenterAlignedTopAppBar(
@@ -73,7 +72,6 @@ fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
             Row {
                 Button(
                     onClick = {
-                        //export file
                         scoutingViewModel.exportReportById(context, scoutingViewModel.reportId,
                             teamViewModel.teamNumberBeingScouted.toString()
                         )
@@ -88,13 +86,3 @@ fun ExportReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun ExportReportPreview(){
-    ScoutTheme{
-        val navController = TestNavHostController(LocalContext.current)
-        val teamViewModel = TeamViewModel()
-        AddReport(teamViewModel, navController)
-    }
-}
-*/

@@ -11,9 +11,7 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
     val allInputFieldNames: LiveData<List<String>> = scoutingFieldDao.getAllInputFieldNames()
 
     // INPUT FIELDS
-    // Suspend keyword ensures functions run asynchronously to main thread
     suspend fun getFieldsForSection(section: String): List<ScoutingInputFields> {
-        // Calls function on scoutingFieldDao
         return scoutingFieldDao.getFieldsForSection(section)
     }
     suspend fun insertFieldToScoutingInputFields(field: ScoutingInputFields) {
@@ -44,13 +42,9 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
     }
 
     suspend fun exportReportById(context: Context, reportId: String, teamNum: String) {
-        val reports = scoutingReportDao.getReportsById(reportId) // Fetch reports from the database
-        val sdf = SimpleDateFormat("'Date:'dd-MM-yyyy'_Time:'HH:mm:ss z")
-        val currentDateAndTime = sdf.format(Date())
+        val reports = scoutingReportDao.getReportsById(reportId)
 
         if (reports.isNotEmpty()) {
-           // FileUtils.exportDatabaseToCSV(context, "Team "+
-                   // teamNum+"_"+currentDateAndTime+".csv", reports)
             FileUtils.exportDatabaseToCSV(context, "Team $teamNum.csv", reports)
         }
     }
@@ -63,7 +57,6 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
             sections.forEach { section ->
                 val existingFields = scoutingFieldDao.getFieldsForSection(section)
                 if (existingFields.isEmpty()) {
-                    // Insert default fields for each section if not already in the database
                     val fields = getDefaultFieldsForSection(section)
                     Log.d("Database", "Database preloaded successfully")
                     fields.forEach { scoutingFieldDao.insertField(it) }
@@ -71,7 +64,7 @@ class ScoutingRepository(private val scoutingFieldDao: ScoutingInputFieldsDao, p
             }
     }
 
-    // Define default fields for each section
+    // Set default fields for section
     private fun getDefaultFieldsForSection(section: String): List<ScoutingInputFields> {
         return when (section) {
             "Autonomous" -> listOf(

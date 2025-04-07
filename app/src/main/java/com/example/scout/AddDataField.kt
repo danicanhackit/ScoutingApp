@@ -143,7 +143,6 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
                 Text("Add Dropdown Options")
-                // Input field to add new dropdown options
                 OutlinedTextField(
                     value = newOption,
                     onValueChange = { newOption = it },
@@ -163,11 +162,10 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Button to add option
                 Button(onClick = {
                     if (newOption.text.isNotBlank()) {
                         addDropdownOptions.add(newOption.text)
-                        newOption = TextFieldValue("") // Clear input after adding
+                        newOption = TextFieldValue("")
                     }
                 }) {
                     Text("Add Option")
@@ -175,7 +173,6 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Display added options
                 Column {
                     addDropdownOptions.forEachIndexed { index, option ->
                         Row(
@@ -221,17 +218,6 @@ fun AddDataField(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMo
 
             Button(onClick = {
                 showDialog.value = true
-                //navController.navigate("addDataFieldMenu")
-
-               /* if(sectionToAddFieldTo != null) {
-                    addDataFieldToDatabase(
-                        scoutingViewModel,
-                        sectionToAddFieldTo,
-                        fieldName.text,
-                        fieldInputTypeToAdd,
-                        addDropdownOptions
-                    )
-                }*/
             },
                 modifier = Modifier.width(150.dp)
             ) {
@@ -309,13 +295,5 @@ fun addDataFieldToDatabase(
 }
 
 
-/*@Preview(showBackground = true)
-@Composable
-fun AddDataFieldPreview(){
-    ScoutTheme{
-        val navController = TestNavHostController(LocalContext.current)
-        val teamViewModel = TeamViewModel()
-        AddDataField(teamViewModel, navController)
-    }
-}*/
+
 

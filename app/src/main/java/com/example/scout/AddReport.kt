@@ -105,8 +105,6 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
                     onClick = {
                         val userInput = teamNum.text.trim()
                         teamViewModel.teamNumberBeingScouted = userInput.toIntOrNull() ?: 0
-                        // this is going to cause problems if someone wants to change
-                        // team being scouted but go back to the same report
                         scoutingViewModel.reportId = scoutingViewModel.generateReportId()
                         navController.navigate("autonomous")
                     }
@@ -118,13 +116,3 @@ fun AddReport(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun AddReportPreview(){
-    ScoutTheme{
-        val navController = TestNavHostController(LocalContext.current)
-        val teamViewModel = TeamViewModel()
-        AddReport(teamViewModel, navController)
-    }
-}
-*/

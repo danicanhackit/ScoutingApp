@@ -13,7 +13,7 @@ interface BlueAllianceAPI {
         // Function takes in parameters of teamNumber (user input) and API key
         @Path("teamNumber") teamNumber: String,
         @Header("X-TBA-Auth-Key") apiKey: String
-    ): Call<TeamResponse>  // Uses TeamResponse directly, not a list
+    ): Call<TeamResponse>
 
     // Get request for simple event list response matching events/simple API endpoint
     @GET("team/frc{teamNumber}/events/{year}/simple")
@@ -22,5 +22,5 @@ interface BlueAllianceAPI {
         @Path("teamNumber") teamNumber: String,
         @Path("year") year: Int,
         @Header("X-TBA-Auth-Key") apiKey: String
-    ): Call<List<TeamEventResponse>> // Returns a list of events
+    ): Call<List<TeamEventResponse>>
 }

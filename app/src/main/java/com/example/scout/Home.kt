@@ -28,7 +28,6 @@ import com.example.scout.viewmodels.TeamViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
-    val eventName = teamViewModel.eventName
     CenterAlignedTopAppBar(
        title = { Text(text = "9181 PlatyPirates", style = MaterialTheme.typography.headlineSmall) }
     )
@@ -41,13 +40,6 @@ fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-
-        if (eventName != null) {
-            Text(text = eventName,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineLarge)
-        }
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
@@ -74,17 +66,6 @@ fun Home(teamViewModel: TeamViewModel, navController: NavHostController){
         ) {
             Text(text = "Back to Start Menu")
         }
-
-        // haven't coded this screen but i'm not sure if i need to
-        /*
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = {
-            navController.navigate("displayData")
-        },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Event Data")
-        }*/
     }
 }
 

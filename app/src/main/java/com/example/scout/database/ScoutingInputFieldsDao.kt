@@ -6,7 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface ScoutingInputFieldsDao {
@@ -17,6 +17,7 @@ interface ScoutingInputFieldsDao {
     // Prevents UI crash
     suspend fun getFieldsForSection(section: String): List<ScoutingInputFields>
 
+    // Gets fields from database by name
     @Query("SELECT * FROM ScoutingInputFields WHERE fieldName = :fieldName")
     suspend fun getFieldByFieldName(fieldName: String): ScoutingInputFields
 

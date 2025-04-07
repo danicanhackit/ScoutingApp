@@ -42,25 +42,23 @@ private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-// Function uses teamViewModel as a parameter to access saved data
 fun EventSelection(teamViewModel: TeamViewModel, navController: NavHostController) {
     val isDropDownExpanded = remember { mutableStateOf(false) }
     val itemPosition = remember { mutableStateOf(0) }
-    // Creates variable with value of teamNumber saved to ViewModel
     val teamNumber = teamViewModel.teamNumber
     val year = teamViewModel.year
     var eventName = "Event Name"
-    var options by remember { mutableStateOf(listOf<String>()) } // Options for the dropdown
-    // Fetch events when the screen is first displayed
+    var options by remember { mutableStateOf(listOf<String>()) }
 
-    // Calls list of events based on teamNumber saved to ViewModel
+
+
     LaunchedEffect(teamNumber) {
         if (teamNumber != null) {
             Log.d("TEAM_NUM", "Team number not null")
             if (year != null) {
                 fetchTeamEvents(teamNumber.toString(), year, API_KEY) { success, eventNames ->
                     if (success && eventNames != null) {
-                        options = eventNames // Update the dropdown options with fetched events
+                        options = eventNames
                         if (options.isNotEmpty()) {
                             itemPosition.value = 0 // Set default selected item
                             Log.d("EVENTS FOUND", "Found events for team")
@@ -149,18 +147,18 @@ fun fetchTeamEvents(
             response: Response<List<TeamEventResponse>>
         ) {
             if (response.isSuccessful) {
-                val eventNames = response.body()?.map { it.name } // Extract event names
+                val eventNames = response.body()?.map { it.name }
                 Log.d("RESPONSE_BODY", "Events: ${response.body()}")
-                onResult(true, eventNames) // Pass the result to the callback
+                onResult(true, eventNames)
             } else {
                 Log.e("API_ERROR", "Error: ${response.code()} - ${response.message()}")
-                onResult(false, null) // Handle error
+                onResult(false, null)
             }
         }
 
         override fun onFailure(call: Call<List<TeamEventResponse>>, t: Throwable) {
             Log.e("API", "Error: ${t.message}")
-            onResult(false, null) // Handle failure with null data
+            onResult(false, null)
         }
     })
 }

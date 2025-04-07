@@ -41,10 +41,8 @@ fun ViewReports(navController: NavHostController) {
     val scoutingReportsDir = File(context.getExternalFilesDir(null), "ScoutingReports")
     val csvFiles = remember { mutableStateListOf(*scoutingReportsDir.listFiles()?.filter { it.extension == "csv" }?.toTypedArray() ?: emptyArray()) }
 
-    // Create an ActivityResultLauncher to handle the result of directory selection
     val openDirectoryForResult = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri: Uri? ->
         uri?.let {
-            // If the user selected a valid directory, call exportToUsb
             exportToUsb(context, csvFiles, uri)
         }
     }
@@ -83,7 +81,6 @@ fun ViewReports(navController: NavHostController) {
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(onClick = {
-                    // Trigger the directory picker when button is clicked
                     openDirectoryForResult.launch(null)
                 }) {
                     Text(text = "Export All to USB")
@@ -209,28 +206,19 @@ fun shareFile(context: Context, file: File) {
 
 fun exportToUsb(context: Context, csvFiles: MutableList<File>, uri: Uri) {
     val contentResolver = context.contentResolver
-
-    // Get a DocumentFile for the URI, representing the root directory of the selected storage location
     val documentFile = DocumentFile.fromTreeUri(context, uri)
 
     if (documentFile != null && documentFile.canWrite()) {
         var successCount = 0
 
-        // Loop through the CSV files and copy them to the USB storage
         for (file in csvFiles) {
-            // Check if the file already exists in the destination directory on USB
             val existingFile = documentFile.findFile(file.name)
-
-            // If the file exists, overwrite it, otherwise create a new file
             val destFile = if (existingFile != null) {
-                // If file exists, return the existing file (overwrite behavior)
                 existingFile
             } else {
-                // If the file doesn't exist, create it
                 documentFile.createFile("text/csv", file.name)
             }
 
-            // If the file creation or retrieval was successful, write the content
             if (destFile != null) {
                 try {
                     val outputStream = contentResolver.openOutputStream(destFile.uri)

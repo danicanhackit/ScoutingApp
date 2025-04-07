@@ -132,30 +132,6 @@ fun DrawConfirmDeleteFieldNotification(fieldToDelete: ScoutingInputFields, scout
     )
 }
 
-fun deleteFieldFromScoutingInputFields(
-    scoutingViewModel: ScoutingViewModel,
-    section: String,
-    fieldName: String,
-    fieldInputType: String,
-    dropdownOptions: String?
-) {
-    scoutingViewModel.deleteFieldFromScoutingInputFields(
-        ScoutingInputFields(
-            section = section,
-            fieldName = fieldName,
-            fieldInputType = fieldInputType,
-            dropdownOptions = dropdownOptions
-        )
-    )
 
-}
 
-/*@Preview(showBackground = true)
-@Composable
-fun RemoveDataFieldPreview(){
-    ScoutTheme{
-        val navController = TestNavHostController(LocalContext.current)
-        RemoveDataField(navController)
-    }
-}*/
 

@@ -76,7 +76,6 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // update for actual event name
             Text(text = "Endgame Period", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -90,7 +89,7 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                             fieldValues.value = fieldValues.value.toMutableMap().apply{
                                 put(field.fieldName, newValue)
                             }
-                        },// Handle value changes
+                        },
                         label = { Text(field.fieldName) },
                         textStyle = TextStyle(color = Burgundy),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
@@ -106,7 +105,7 @@ fun Endgame(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, 
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                 } else if(field.fieldInputType == "Dropdown"){
-                    val selectedValue = fieldValues.value[field.fieldName] // Can be null
+                    val selectedValue = fieldValues.value[field.fieldName]
                     DrawDropdownOptions(field, selectedValue) { selectedOption ->
                         fieldValues.value = fieldValues.value.toMutableMap().apply {
                             put(field.fieldName, selectedOption)
@@ -166,7 +165,6 @@ fun DrawConfirmNotification(showDialog: MutableState<Boolean>, navController: Na
         confirmButton = {
             TextButton(
                 onClick = {
-                    //showDialog.value = false
                     navController.navigate("exportReport")
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -210,14 +208,6 @@ fun addReportToDatabase(
         )
     )
 }
-/*@Preview(showBackground = true)
-@Composable
-fun EndgamePreview(){
-    ScoutTheme{
-        val navController = TestNavHostController(LocalContext.current)
-        Teleop(navController)
-    }
-}*/
 
 
 

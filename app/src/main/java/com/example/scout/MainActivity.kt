@@ -52,6 +52,29 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+@Composable
+fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingViewModel) {
+    val teamViewModel: TeamViewModel = viewModel()
+
+    NavHost(navController = navController, startDestination = "signIn") {
+        composable("signIn") { SignIn(teamViewModel, navController) }
+        composable("start") { StartScreen(teamViewModel, navController) }
+        composable("viewReports") { ViewReports(navController) }
+        composable("editDataFields") { EditDataFields(navController) }
+        composable("removeDataFieldMenu") { RemoveDataFieldMenu(scoutingViewModel, navController) }
+        composable("removeDataField") { RemoveDataField(scoutingViewModel, navController) }
+        composable("addDataFieldMenu") { AddDataFieldMenu(teamViewModel, navController) }
+        composable("addDataField") { AddDataField(teamViewModel, scoutingViewModel, navController) }
+        composable("eventSelection") { EventSelection(teamViewModel, navController) }
+        composable("home") { Home(teamViewModel, navController) }
+        composable("addReport") { AddReport(teamViewModel, scoutingViewModel, navController) }
+        composable("autonomous") { Autonomous(teamViewModel, scoutingViewModel, navController) }
+        composable("teleop") { Teleop(teamViewModel, scoutingViewModel, navController) }
+        composable("endgame") { Endgame(teamViewModel, scoutingViewModel, navController) }
+        composable("exportReport") { ExportReport(teamViewModel, scoutingViewModel, navController) }
+    }
+}
+
     private fun hasStoragePermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
@@ -84,32 +107,9 @@ class MainActivity : ComponentActivity() {
                 )
             )
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-            // For Android 11+ (API 30+), check and request MANAGE_EXTERNAL_STORAGE permission
             val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
             startActivityForResult(intent, 1)
         }
     }
 }
 
-@Composable
-fun AppNavigation(navController: NavHostController, scoutingViewModel: ScoutingViewModel) {
-    val teamViewModel: TeamViewModel = viewModel()
-
-    NavHost(navController = navController, startDestination = "signIn") {
-        composable("signIn") { SignIn(teamViewModel, navController) }
-        composable("start") { StartScreen(teamViewModel, navController) }
-        composable("viewReports") { ViewReports(navController) }
-        composable("editDataFields") { EditDataFields(navController) }
-        composable("removeDataFieldMenu") { RemoveDataFieldMenu(scoutingViewModel, navController) }
-        composable("removeDataField") { RemoveDataField(scoutingViewModel, navController) }
-        composable("addDataFieldMenu") { AddDataFieldMenu(teamViewModel, navController) }
-        composable("addDataField") { AddDataField(teamViewModel, scoutingViewModel, navController) }
-        composable("eventSelection") { EventSelection(teamViewModel, navController) }
-        composable("home") { Home(teamViewModel, navController) }
-        composable("addReport") { AddReport(teamViewModel, scoutingViewModel, navController) }
-        composable("autonomous") { Autonomous(teamViewModel, scoutingViewModel, navController) }
-        composable("teleop") { Teleop(teamViewModel, scoutingViewModel, navController) }
-        composable("endgame") { Endgame(teamViewModel, scoutingViewModel, navController) }
-        composable("exportReport") { ExportReport(teamViewModel, scoutingViewModel, navController) }
-    }
-}

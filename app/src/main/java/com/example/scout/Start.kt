@@ -56,16 +56,6 @@ fun StartScreen(teamViewModel: TeamViewModel, navController: NavHostController) 
                 Text(text = "Add New Scouting Report")
             }
 
-            // haven't coded this screen yet but not sure if I need to
-            /*Spacer(modifier = Modifier.height(10.dp))
-            Button(onClick = {
-                navController.navigate("displayData")
-            },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Past Data")
-            }*/
-
             Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
                 navController.navigate("editDataFields")

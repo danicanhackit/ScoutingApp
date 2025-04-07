@@ -48,18 +48,13 @@ import com.example.scout.viewmodels.TeamViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewModel, navController: NavHostController) {
-
-    // Initialize state for each input field, one per data field
     val fieldValues = remember { mutableStateOf(mapOf<String, String>()) }
-
     val eventName = teamViewModel.eventName
-    // Accesses only autonomous fields from database through scoutingViewModel
     val fieldsForAutonomous by scoutingViewModel.fieldsForAutonomous.observeAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
     val reportSectionsToDelete by scoutingViewModel.reportsByTeamNum.observeAsState(emptyList())
 
     LaunchedEffect(Unit) {
-        // Calls loadFieldsForAutonomous method from ScoutingViewModel
         scoutingViewModel.loadFieldsForAutonomous()
         scoutingViewModel.getReportFieldsByTeamNum(scoutingViewModel.reportId, teamViewModel.teamNumberBeingScouted)
     }
@@ -89,7 +84,6 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
             Text(text = "Autonomous Period", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Iterate over the fields for the autonomous section and create number input fields
             fieldsForAutonomous.forEach { field ->
                 if(field.fieldInputType == "Number"){
                     val textState = remember { mutableStateOf("") }
@@ -122,7 +116,6 @@ fun Autonomous(teamViewModel: TeamViewModel, scoutingViewModel: ScoutingViewMode
                             put(field.fieldName, selectedOption)
                         }
                     }
-                    //Text(text = "hello")
                 }
 
             }
@@ -174,7 +167,6 @@ fun DrawDropdownOptions(
     val isDropDownExpanded = remember { mutableStateOf(false) }
     val selectedOption = remember { mutableStateOf(selectedValue ?: "Select an Option") }
 
-    // Convert comma-separated string into a list
     val options: List<String> = field.dropdownOptions?.split(",")?.map { it.trim() } ?: emptyList()
 
     Row{
@@ -202,7 +194,7 @@ fun DrawDropdownOptions(
                         onClick = {
                             selectedOption.value = option
                             isDropDownExpanded.value = false
-                            onValueSelected(option) // Update fieldValues
+                            onValueSelected(option)
                         }
                     )
                 }
@@ -210,18 +202,3 @@ fun DrawDropdownOptions(
         }
     }
 }
-
-
-
-
-
-
-
-/*@Preview(showBackground = true)
-@Composable
-fun AutonomousPreview() {
-    ScoutTheme {
-        val navController = TestNavHostController(LocalContext.current)
-        Autonomous(ScoutingViewModel(ScoutingRepository()), navController)
-    }
-}*/

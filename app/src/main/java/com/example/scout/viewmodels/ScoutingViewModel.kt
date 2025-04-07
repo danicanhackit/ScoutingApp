@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 
 class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel() {
 
+    val allInputFieldNames: LiveData<List<String>> = repository.allInputFieldNames
+
     private val _fieldsForAutonomous = MutableLiveData<List<ScoutingInputFields>>()
     val fieldsForAutonomous: LiveData<List<ScoutingInputFields>> = _fieldsForAutonomous
 
@@ -24,8 +26,6 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
 
     private val _fieldsForEndgame = MutableLiveData<List<ScoutingInputFields>>()
     val fieldsForEndgame: LiveData<List<ScoutingInputFields>> = _fieldsForEndgame
-
-    val allInputFieldNames: LiveData<List<String>> = repository.allInputFieldNames
 
     private val _selectedField = MutableStateFlow<ScoutingInputFields?>(null)
     val selectedField: StateFlow<ScoutingInputFields?> = _selectedField
@@ -42,14 +42,13 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     var reportId: String = ""
     var fieldToDelete: String? = null
 
-    // Call this function to preload the database with default fields
     init {
         viewModelScope.launch {
             repository.preloadDatabase()
         }
     }
 
-    // Load fields for the "Autonomous" section
+    // INPUT FIELDS
     fun loadFieldsForAutonomous() {
         viewModelScope.launch {
             val fields = repository.getFieldsForSection("Autonomous")
@@ -57,7 +56,6 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
         }
     }
 
-    // Load fields for the "Teleop" section
     fun loadFieldsForTeleop() {
         viewModelScope.launch {
             val fields = repository.getFieldsForSection("Teleop")
@@ -72,15 +70,12 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
         }
     }
 
-
-    // Insert a new field into the database
     fun insertFieldToScoutingInputFields(field: ScoutingInputFields) {
         viewModelScope.launch {
             repository.insertFieldToScoutingInputFields(field)
         }
     }
 
-    // Delete a field from the database
     fun deleteFieldFromScoutingInputFields(field: ScoutingInputFields) {
         viewModelScope.launch {
             repository.deleteFieldFromScoutingInputFields(field)
@@ -94,6 +89,7 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
         }
     }
 
+    // SCOUTING REPORTS
     fun getReportFieldsBySection(id: String, section: String){
         viewModelScope.launch {
             val fields = repository.getReportsByIdAndSection(id, section)
@@ -134,7 +130,7 @@ class ScoutingViewModel(private val repository: ScoutingRepository) : ViewModel(
     }
 
     fun generateReportId(): String {
-        return UUID.randomUUID().toString() // Generates a unique string every time
+        return UUID.randomUUID().toString()
     }
 
 }

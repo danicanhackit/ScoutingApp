@@ -9,7 +9,6 @@ object RetrofitInstance {
     private const val BASE_URL = "https://www.thebluealliance.com/api/v3/"
 
     private val retrofit by lazy {
-        // Builds Retrofit instance
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -17,7 +16,6 @@ object RetrofitInstance {
     }
 
     val api: BlueAllianceAPI by lazy {
-        // Implements BlueAllianceAPI endpoints
         retrofit.create(BlueAllianceAPI::class.java)
     }
 }

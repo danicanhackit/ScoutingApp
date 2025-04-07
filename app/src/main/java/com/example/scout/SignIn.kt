@@ -44,7 +44,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-// Temporary hardcoded API key for testing purposes
 private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3MxVwS2OZtB7Mf"
 
 
@@ -52,8 +51,7 @@ private const val API_KEY = "lYGojKcODnYEUfpa486Fs0Z8oYI9R2TkS3RS6m3qc39PS43SOB3
 @Composable
 fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
     var scouterName by remember { mutableStateOf(TextFieldValue("")) }
-    var teamNumber by remember { mutableStateOf(TextFieldValue("")) }
-    var year by remember{ mutableStateOf(TextFieldValue("")) }
+
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -73,25 +71,6 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
             Text(text = "Welcome!", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            /*OutlinedTextField(
-                value = teamNumber,
-                onValueChange = { teamNumber = it },
-                label = { Text("Team Number:", color = Burgundy) },
-                textStyle = TextStyle(color = Burgundy),
-                // keyboard controller code from that one resource i put in a google doc
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = { keyboardController?.hide()}
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    cursorColor = Burgundy,
-                    focusedBorderColor = PlatyRed,
-                    unfocusedBorderColor = Burgundy,
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            */
             OutlinedTextField(
                 value = scouterName,
                 onValueChange = { scouterName = it },
@@ -110,54 +89,6 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            /*OutlinedTextField(
-                value = year,
-                onValueChange = { year = it },
-                label = { Text("Year:", color = Burgundy) },
-                textStyle = TextStyle(color = Burgundy),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = { keyboardController?.hide()}
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    cursorColor = Burgundy,
-                    focusedBorderColor = PlatyRed,
-                    unfocusedBorderColor = Burgundy,
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Button to go to next screen, notification only pops up if going to next screen
-            Button(onClick = {
-                if (scouterName.text.isNotEmpty() && teamNumber.text.isNotEmpty()) {
-                    // Calls fetchTeamInfo function using team number entered by user
-                    fetchTeamInfo(teamNumber.text, context) { success, nickname -> // Nickname from onSuccess function
-                        if (success && nickname != null) {
-                            teamViewModel.teamNumber = teamNumber.text
-                            teamViewModel.teamNickname = nickname
-                            // Toast is a widget library used for pop-up notifications
-                            Toast.makeText(
-                                context,
-                                // Creates pop-up message welcoming the team from "nickname", which is
-                                // pulled from API response
-                                "Welcome ${scouterName.text} from \"$nickname\"",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            teamViewModel.year = year.text.toInt()
-                            teamViewModel.scouterName = scouterName.toString()
-
-                            navController.navigate("start")
-                        } else {
-                            Toast.makeText(context, "Invalid team number. Please try again.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } else {
-                    Toast.makeText(context, "Please fill out all fields", Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                Text(text = "Submit")
-            }*/
 
             Button(onClick = {
                 Toast.makeText(
@@ -176,19 +107,15 @@ fun SignIn(teamViewModel: TeamViewModel, navController: NavHostController) {
     }
 }
 
-// Parameter of teamNumber, which is entered by the user
 fun fetchTeamInfo(teamNumber: String, context: android.content.Context, onResult: (Boolean, String?) -> Unit) {
-    // Calls getTeam function from BlueAllianceAPI interface that will return team info
     val call = RetrofitInstance.api.getTeam(teamNumber, API_KEY)
 
     call.enqueue(object : Callback<TeamResponse> {
-        // If API response is successful
         override fun onResponse(call: Call<TeamResponse>, response: Response<TeamResponse>) {
             if (response.isSuccessful) {
                 val teamInfo = response.body()
                 if (teamInfo != null) {
                     Log.d("API", "Team Info: $teamInfo")
-                    // Information I wanted was nickname, passes nickname to result callback
                     onResult(true, teamInfo.nickname)
                 } else {
                     Log.e("API", "Response body is null")
@@ -199,13 +126,12 @@ fun fetchTeamInfo(teamNumber: String, context: android.content.Context, onResult
                 response.errorBody()?.let { errorBody ->
                     Log.e("API", "Error body: ${errorBody.string()}")
                 }
-                onResult(false, null)  // Mark failure
+                onResult(false, null)
             }
         }
-        // If API call fails
         override fun onFailure(call: Call<TeamResponse>, t: Throwable) {
             Log.e("API", "Error: ${t.message}")
-            onResult(false, null) // API call failed
+            onResult(false, null)
         }
     })
 }
